@@ -1,4 +1,4 @@
-import { Injectable, signal, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, Inject, WritableSignal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 export type SoundType =
@@ -20,8 +20,9 @@ export class SoundService {
   private isBrowser: boolean;
   private audioCache = new Map<SoundType, HTMLAudioElement>();
 
-  isMuted = signal<boolean>(false); // Initialize to false, will be overridden by loadInitialState
-  private userHasInteracted = false; // Flag to track user interaction
+  isMuted = signal<boolean>(true); // NEW: Default to true (muted) initially
+  volume: WritableSignal<number> = signal<number>(1);
+  private userHasInteracted = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -34,15 +35,27 @@ export class SoundService {
 
   private loadInitialState(): void {
     const storedMuteState = localStorage.getItem('isMuted');
+    const storedVolume = localStorage.getItem('volume');
 
-    // If no stored state, or if stored state is 'false', we initially set to true (muted)
-    // because we haven't had user interaction yet.
-    // This state will be updated upon first interaction.
-    if (storedMuteState === null) {
-      this.isMuted.set(true); // Default to muted until interaction
+    // NEW: On initial load, we always START muted.
+    // The actual preference from localStorage will be applied AFTER first interaction.
+    this.isMuted.set(true); // Force muted state initially for UI and functionality
+
+    // Load stored volume or default to 1 (full volume)
+    if (storedVolume !== null) {
+      this.volume.set(parseFloat(storedVolume));
     } else {
-      // If there's a stored state, respect it.
-      this.isMuted.set(storedMuteState === 'true');
+      this.volume.set(1); // Default to full volume
+      localStorage.setItem('volume', '1'); // Store default if not present
+    }
+
+    // Ensure mute state aligns with volume 0 on load if volume was previously saved as 0.
+    // This is a subtle point, if a user saved volume 0, the UI should reflect muted.
+    // This might be redundant now with the forced `isMuted.set(true)` above, but keep for robustness.
+    if (this.volume() === 0 && !this.isMuted()) {
+      // This condition will likely be false now due to forced mute
+      this.isMuted.set(true);
+      localStorage.setItem('isMuted', 'true');
     }
   }
 
@@ -64,6 +77,7 @@ export class SoundService {
       const type = key as SoundType;
       const audio = new Audio(sounds[type]);
       audio.load();
+      audio.volume = this.volume(); // Apply initial volume to preloaded sounds
       this.audioCache.set(type, audio);
     }
   }
@@ -74,47 +88,45 @@ export class SoundService {
       this.userHasInteracted = true;
       console.log('User interacted, audio unlocked!');
 
-      // Only unmute if the user hasn't explicitly muted it before
-      // and it's currently showing as muted (which it would be by default)
-      if (this.isMuted()) {
-        const storedMuteState = localStorage.getItem('isMuted');
-        // If there was no stored mute state (meaning we defaulted to muted),
-        // or if the stored state was 'false' (meaning user previously preferred unmuted),
-        // then unmute it now.
-        if (storedMuteState === null || storedMuteState === 'false') {
-          this.isMuted.set(false);
-          localStorage.setItem('isMuted', 'false'); // Persist the unmuted state
-          this.playSound('clickSounds'); // Optional: Play a sound to confirm unmuting
-        }
+      // NEW: After the first interaction, apply the user's *actual* stored preference.
+      const storedMuteState = localStorage.getItem('isMuted');
+      if (storedMuteState === 'false') {
+        // User previously preferred unmuted
+        this.isMuted.set(false);
+        this.playSound('clickSounds'); // Provide audio feedback for unmuting
+      } else if (storedMuteState === 'true') {
+        // User previously preferred muted
+        this.isMuted.set(true); // Keep it muted
+      } else {
+        // No stored preference, default to unmuted after first interaction
+        this.isMuted.set(false);
+        localStorage.setItem('isMuted', 'false'); // Save this as the new preference
+        this.playSound('clickSounds'); // Provide audio feedback for unmuting
       }
 
-      events.forEach(e => document.removeEventListener(e, listener));
+      events.forEach((e) => document.removeEventListener(e, listener));
     };
-    events.forEach(e => document.addEventListener(e, listener, { once: true }));
+    events.forEach((e) => document.addEventListener(e, listener, { once: true }));
   }
 
   playSound(soundType: SoundType): void {
+    // Check for isBrowser and if currently muted
     if (!this.isBrowser || this.isMuted()) {
       return;
     }
 
-    // This check is now less about "NotAllowedError" and more about intent,
-    // as we default to muted until interaction. If isMuted() is false,
-    // it implies userHasInteracted is true or a prior preference was saved.
-    // However, it's still a good safeguard.
-    if (!this.userHasInteracted && !this.isMuted()) {
-       console.warn(`Sound "${soundType}" skipped: No direct user interaction yet, and sound isn't explicitly unmuted.`);
-       return;
+    // Prevent play if no user interaction yet (browser autoplay policy)
+    if (!this.userHasInteracted) {
+      console.warn(`Sound "${soundType}" skipped: No direct user interaction yet.`);
+      return;
     }
-
 
     const audio = this.audioCache.get(soundType);
     if (audio) {
       const audioInstance = audio.cloneNode() as HTMLAudioElement;
       audioInstance.currentTime = 0;
+      audioInstance.volume = this.volume();
       audioInstance.play().catch((error) => {
-        // This catch block is for unexpected errors, as NotAllowedError should
-        // ideally be prevented by the `isMuted` and `userHasInteracted` logic.
         console.error(`Error playing sound: ${soundType}`, error);
       });
     }
@@ -127,14 +139,45 @@ export class SoundService {
       const newMutedState = !muted;
       localStorage.setItem('isMuted', String(newMutedState));
 
-      // Play sound only when unmuting
-      if (!newMutedState) {
-        // Since toggleMute is a direct user action, we can assume interaction has occurred
-        // for the purpose of playing the 'clickSounds' feedback.
-        this.playSound('clickSounds');
+      if (newMutedState) {
+        // If muting
+        if (this.volume() > 0) {
+          localStorage.setItem('previousVolumeBeforeMute', String(this.volume()));
+        }
+        this.setVolume(0); // Set volume to 0 when muted via toggle
+      } else {
+        // If unmuting
+        const storedPreviousVolume = localStorage.getItem('previousVolumeBeforeMute');
+        const restoredVolume = storedPreviousVolume ? parseFloat(storedPreviousVolume) : 1;
+        this.setVolume(restoredVolume);
+        if (this.userHasInteracted) {
+          // Only play feedback if audio is unlocked
+          this.playSound('clickSounds');
+        }
       }
 
       return newMutedState;
     });
+  }
+
+  setVolume(newVolume: number): void {
+    if (!this.isBrowser) return;
+    const clampedVolume = Math.max(0, Math.min(1, newVolume));
+    this.volume.set(clampedVolume);
+    localStorage.setItem('volume', String(clampedVolume));
+
+    // Logic to sync mute state with volume slider
+    if (clampedVolume > 0 && this.isMuted()) {
+      const storedMuteState = localStorage.getItem('isMuted');
+      // Unmute if user slides up from 0 and it was muted by default or explicitly muted
+      if (storedMuteState === null || storedMuteState === 'true') {
+        this.isMuted.set(false);
+        localStorage.setItem('isMuted', 'false');
+      }
+    } else if (clampedVolume === 0 && !this.isMuted()) {
+      // Mute if user slides to 0 and it was not already muted
+      this.isMuted.set(true);
+      localStorage.setItem('isMuted', 'true');
+    }
   }
 }

@@ -1,33 +1,29 @@
 // header.ts
-import { CommonModule, ViewportScroller } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
   HostListener,
   inject,
-  OnInit,
-  OnDestroy,
   signal,
-  AfterViewInit,
-  effect,
-  computed, // <--- Import effect
+  computed,
 } from '@angular/core';
 import { ThemeService } from '../../services/theme';
 import { SoundService } from '../../services/sound';
 import { NavigationService } from '../../services/navigation';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
+import { VolumeControl } from '../../../shared/components/volume-control/volume-control';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, VolumeControl],
   templateUrl: './header.html',
   styleUrls: ['./header.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Header  {
+export class Header {
   themeService = inject(ThemeService);
   soundService = inject(SoundService);
   navigationService = inject(NavigationService);
@@ -36,14 +32,9 @@ export class Header  {
   scrollTop = signal(0);
   activeFragment = signal<string | null>('home'); // Default to home
 
-  // --- Shrink Logic Fix ---
-  // The header now shrinks if the user scrolls down more than 50px,
-  // OR if the current URL fragment is anything other than 'home'.
-  // This makes the behavior consistent during both manual and router-based scrolling.
   isShrunk = computed(
     () =>
-      this.scrollTop() > 50 ||
-      (this.activeFragment() !== null && this.activeFragment() !== 'home')
+      this.scrollTop() > 50 || (this.activeFragment() !== null && this.activeFragment() !== 'home')
   );
 
   isMenuOpen = signal(false);
@@ -51,11 +42,7 @@ export class Header  {
   constructor() {
     // Listen to router events to know which section is active
     this.router.events
-      .pipe(
-        filter(
-          (event): event is NavigationEnd => event instanceof NavigationEnd
-        )
-      )
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         const fragment = this.router.parseUrl(event.urlAfterRedirects).fragment;
         this.activeFragment.set(fragment || 'home');

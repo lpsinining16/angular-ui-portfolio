@@ -1,0 +1,24 @@
+<!-- src/app/shared/components/volume-control/volume-control.component.html -->
+<div class="flex items-center space-x-2 p-2">
+    <!-- Mute/Unmute Button -->
+    <button (click)="toggleMuteAndVolume()" class="p-2 rounded-full focus:outline-none transition-colors duration-200"
+        [ngClass]="{
+            'text-gray-400 hover:text-gray-300': soundService.isMuted() || soundService.volume() === 0,
+            'text-blue-500 hover:text-blue-400': !soundService.isMuted() && soundService.volume() > 0
+          }">
+        <ng-container *ngIf="soundService.isMuted() || soundService.volume() === 0">
+            <i class="bx bx-volume-mute text-xl"></i>
+        </ng-container>
+        <ng-container *ngIf="!soundService.isMuted() && soundService.volume() > 0">
+            <i class="bx bx-volume-full text-xl"></i>
+        </ng-container>
+    </button>
+
+    <!-- Volume Slider -->
+    <input type="range" min="0" max="1" step="0.01" [ngModel]="soundService.volume()"
+        (ngModelChange)="onVolumeChange($event)"
+        class="w-32 h-2 rounded-lg appearance-none cursor-pointer range-lg
+           bg-gray-300 dark:bg-gray-700
+           [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500
+           [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-blue-500">
+</div>
