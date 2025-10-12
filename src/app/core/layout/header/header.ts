@@ -1,0 +1,90 @@
+// header.ts
+import { CommonModule, ViewportScroller } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  HostListener,
+  inject,
+  OnInit,
+  OnDestroy,
+  signal,
+  AfterViewInit,
+  effect,
+  computed, // <--- Import effect
+} from '@angular/core';
+import { ThemeService } from '../../services/theme';
+import { SoundService } from '../../services/sound';
+import { NavigationService } from '../../services/navigation';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
+
+@Component({
+  selector: 'app-header',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './header.html',
+  styleUrls: ['./header.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Header  {
+  themeService = inject(ThemeService);
+  soundService = inject(SoundService);
+  navigationService = inject(NavigationService);
+  router = inject(Router);
+
+  scrollTop = signal(0);
+  activeFragment = signal<string | null>('home'); // Default to home
+
+  // --- Shrink Logic Fix ---
+  // The header now shrinks if the user scrolls down more than 50px,
+  // OR if the current URL fragment is anything other than 'home'.
+  // This makes the behavior consistent during both manual and router-based scrolling.
+  isShrunk = computed(
+    () =>
+      this.scrollTop() > 50 ||
+      (this.activeFragment() !== null && this.activeFragment() !== 'home')
+  );
+
+  isMenuOpen = signal(false);
+
+  constructor() {
+    // Listen to router events to know which section is active
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((event: NavigationEnd) => {
+        const fragment = this.router.parseUrl(event.urlAfterRedirects).fragment;
+        this.activeFragment.set(fragment || 'home');
+      });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.scrollTop.set(window.scrollY);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+    this.soundService.playSound('clickThemeSwitcher');
+  }
+
+  toggleSound(): void {
+    this.soundService.toggleMute();
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen.update((isOpen) => !isOpen);
+    this.soundService.playSound('click');
+  }
+
+  onNavLinkClick(fragment: string): void {
+    this.navigationService.navigateToFragment(fragment);
+    if (this.isMenuOpen()) {
+      this.toggleMenu();
+    }
+  }
+}

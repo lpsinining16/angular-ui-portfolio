@@ -1,1 +1,116 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
+
+:root {
+  --background: #fffbfe;
+  --surface: #ffffff;
+  --primary: #6750a4;
+  --primary-container: #eaddff;
+  --text-color: #1c1b1f;
+
+  /* New text-muted variable for subtle text */
+  --text-muted: #625c68; /* A slightly softer dark gray for light mode */
+
+  /* Light mode section backgrounds */
+  --section-1-bg: #fffbfe; /* same as background */
+  --section-2-bg: #f2ecfa; /* soft light gray/lavender */
+  --section-3-bg: #ffffff;
+  --section-4-bg: #f2ecfa;
+  --section-5-bg: #ffffff;
+
+  --bubble-bg: rgba(103, 80, 164, 0.2);
+  --bubble-shadow: 0 0 10px rgba(103, 80, 164, 0.3);
+
+  /* Image glow animation start/end colors */
+  --image-glow-start: 0 0 20px var(--primary);
+  --image-glow-end: 0 0 35px var(--bubble-shadow);
+
+  /* Primary container soft for bubble variations */
+  --primary-container-soft: rgba(234, 221, 255, 0.7); /* EADDFF with 70% opacity */
+}
+
+.dark {
+  --background: #1c1b1f;
+  --surface: #2a292e;
+  --primary: #d0bcff;
+  --primary-container: #4f378b;
+  --text-color: #e6e1e5;
+
+  /* New text-muted variable for subtle text */
+  --text-muted: #a39ea7; /* A slightly softer light gray for dark mode */
+
+  /* Dark mode section backgrounds */
+  --section-1-bg: #1c1b1f; /* blackish */
+  --section-2-bg: #2a292e; /* dark gray */
+  --section-3-bg: #1c1b1f;
+  --section-4-bg: #2a292e;
+  --section-5-bg: #1c1b1f;
+
+  --bubble-bg: rgba(208, 188, 255, 0.15);
+  --bubble-shadow: 0 0 10px rgba(208, 188, 255, 0.25);
+
+  /* Image glow animation start/end colors */
+  --image-glow-start: 0 0 20px var(--primary);
+  --image-glow-end: 0 0 35px var(--bubble-shadow);
+
+  /* Primary container soft for bubble variations */
+  --primary-container-soft: rgba(79, 55, 139, 0.7); /* 4F378B with 70% opacity */
+}
+
+/* Keyframe for the 'rise' animation */
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-50vh) scale(1.05);
+  }
+  100% {
+    transform: translateY(-100vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Keyframe for the 'chaotic-roam' animation */
+@keyframes chaotic-roam {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(var(--x-dist1), var(--y-dist1)) scale(1.1);
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--x-dist2), var(--y-dist2)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // ensures equal card height in grid
+}

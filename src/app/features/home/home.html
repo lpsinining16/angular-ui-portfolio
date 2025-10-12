@@ -1,0 +1,44 @@
+@if (profile(); as userProfile) {
+<section class="home">
+  <!-- Social Icons Rail -->
+  <div class="home-sci">
+    <a [href]="userProfile.linkedin" target="_blank" rel="noopener noreferrer"
+      (mouseenter)="playBubbleHoverSound('hoverBubbles2')" aria-label="LinkedIn profile"><i class="bx bxl-linkedin"></i></a>
+    <a [href]="userProfile.github" target="_blank" rel="noopener noreferrer"
+      (mouseenter)="playBubbleHoverSound('hoverBubbles2')" aria-label="GitHub profile"><i class="bx bxl-github"></i></a>
+    <a [href]="'mailto:' + userProfile.email" (mouseenter)="playBubbleHoverSound('hoverBubbles2')"
+      aria-label="Email"><i class="bx bx-envelope"></i></a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="home-content">
+    <h1>Hi, I'm {{ userProfile.name }}</h1>
+    <h3>{{ userProfile.headline }}</h3>
+    <p>{{ userProfile.summary }}</p>
+    <div class="btn-box">
+      <a (click)="onViewProjectsClick()" class="btn">View Projects</a>
+      <span class="or-text">or</span>
+      <a (click)="onReadAboutMeClick()" class="btn">Read about Me</a>
+    </div>
+  </div>
+
+  <!-- Profile Image and Animations -->
+  <div class="home-img">
+    <div class="image-wrapper">
+      <img [ngSrc]="userProfile.profilePhoto" alt="Profile Photo of {{ userProfile.name }}" width="832" height="1248"
+        priority />
+    </div>
+    <!-- Decorative Bubbles (Generated from Component) -->
+    @for (bubble of decorativeBubbles; track $index) {
+    <span class="bubble-deco" (mouseenter)="playBubbleHoverSound('hoverBubbles')"></span>
+    }
+  </div>
+</section>
+} @else {
+<section class="home loading-placeholder">
+  <div class="spinner"></div>
+  <p class="loading-text">Loading profile data...</p>
+</section>
+}
+
+

@@ -1,0 +1,51 @@
+<!-- Skills Section -->
+<section class="skills-section min-h-screen py-20 font-sans relative overflow-hidden w-full">
+
+  <!-- Reusable bubbles component -->
+  <app-bubbles [bubbles]="bubblesConfig"></app-bubbles>
+
+  <!-- Main Content -->
+  <div class="max-w-5xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="mb-16 text-center sm:text-left">
+      <h2 class="text-4xl md:text-5xl font-bold text-light-text dark:text-dark-text flex items-center justify-center sm:justify-start gap-4">
+        <!-- Heroicon: academic-cap -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 text-light-primary dark:text-dark-primary">
+          <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
+          <path fill-rule="evenodd" d="M3.087 9l.54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.914 9H3.087Zm16.084-1.5H4.828a1.5 1.5 0 0 1-1.423-1.042l-.286-.572a1.5 1.5 0 0 1 .63-1.878l.41-.205A1.5 1.5 0 0 1 5.56 4.5h12.88a1.5 1.5 0 0 1 1.332 2.003l-.41-.205a1.5 1.5 0 0 1-.63 1.878l-.287.572A1.5 1.5 0 0 1 19.172 7.5Z" clip-rule="evenodd" />
+        </svg>
+        <span>Skills & Technologies</span>
+      </h2>
+      <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto sm:mx-0">
+        A collection of the primary tools and technologies I work with.
+      </p>
+    </div>
+
+    <!-- Skills Category Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (skillGroup of skills(); track skillGroup.category) {
+        <!-- Main Card for the Category -->
+        <div class="bg-light-surface dark:bg-dark-surface rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden flex flex-col">
+          
+          <!-- Card Header with Category Title -->
+          <div class="bg-light-primary-container dark:bg-dark-primary-container p-6 flex items-center justify-center min-h-[120px]">
+            <h3 class="text-xl font-bold text-center text-light-primary dark:text-dark-primary">{{ skillGroup.category }}</h3>
+          </div>
+
+          <!-- Card Body with Skill Tags -->
+          <div class="p-6 flex-grow">
+            <div class="flex flex-wrap gap-2 justify-center">
+              @for (tech of skillGroup.technologies; track tech) {
+                <!-- Skill Tag -->
+                <span class="bg-light-primary-container dark:bg-dark-primary-container text-light-primary dark:text-dark-primary font-medium px-3 py-1 rounded-md text-sm shadow-sm cursor-default transition-transform duration-200 hover:scale-105" (mouseenter)="playHoverSound()">
+                  {{ tech }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+

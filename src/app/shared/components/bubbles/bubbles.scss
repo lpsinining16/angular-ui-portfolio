@@ -1,0 +1,24 @@
+/* This file now contains all the necessary styles for the bubbles,
+  including the keyframe animations, making the component self-sufficient.
+*/
+.bubble {
+  position: absolute;
+  background: var(--bubble-bg);
+  border-radius: 50%;
+  box-shadow: var(--bubble-shadow);
+  opacity: 0;
+
+  /* Use the CSS variable to set the animation name, with 'rise' as a fallback. */
+  animation-name: var(--animation-name, rise); // This references the GLOBAL keyframes
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+
+  /* Apply styles from the component's data */
+  width: var(--size);
+  height: var(--size);
+  top: var(--top);
+  left: var(--left);
+  bottom: var(--bottom);
+  animation-duration: var(--duration);
+  animation-delay: var(--delay);
+}

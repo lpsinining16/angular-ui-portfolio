@@ -1,0 +1,509 @@
+:host {
+  display: block;
+  width: 100%;
+  background-color: var(--section-1-bg);
+  transition: background-color 0.3s ease;
+}
+.home {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 8rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+  // Loading state styling
+  &.loading-placeholder {
+    flex-direction: column;
+    gap: 1.5rem;
+    .spinner {
+      border: 4px solid rgba(var(--primary-rgb), 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    .loading-text {
+      color: var(--text-muted); // Using the new muted text variable
+      font-size: 1.1rem;
+    }
+  }
+}
+.home-content {
+  max-width: 600px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -4rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary-container);
+    border-radius: 1px;
+    opacity: 0;
+    animation: slideRight 1s ease forwards;
+    animation-delay: 1.6s;
+  }
+
+  h1 {
+    font-size: 3.5rem; // 56px
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-color); /* Changed to text-color for stronger visual hierarchy */
+    opacity: 0;
+    animation: slideBottom 1s ease forwards;
+    animation-delay: 0.7s;
+  }
+  h3 {
+    font-size: 2rem; // 32px
+    font-weight: 700;
+    color: var(--primary);
+    opacity: 0;
+    animation: slideRight 1s ease forwards;
+    animation-delay: 1s;
+  }
+  p {
+    font-size: 1rem; // 16px
+    margin: 1.5rem 0;
+    line-height: 1.6; /* Added for improved readability */
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: 1.3s;
+  }
+}
+.btn-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 50px;
+  opacity: 0;
+  animation: slideTop 1s ease forwards;
+  animation-delay: 1.6s;
+  .or-text {
+    color: var(--text-muted); /* Using the new muted text variable */
+    font-weight: 500;
+    font-size: 0.95rem; /* Slightly smaller for subtle integration */
+    // opacity: 0.8; /* Removed as --text-muted handles this */
+  }
+  .btn {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1.5rem; // Use padding for flexible width
+    height: 100%;
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    font-size: 1.1rem; // Adjusted font size
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 1px;
+    z-index: 1;
+    overflow: hidden;
+    transition: 0.5s;
+    cursor: pointer;
+    white-space: nowrap; // Prevent text wrapping
+
+    &:hover,
+    &:focus-visible {
+      /* Added focus-visible for keyboard navigation */
+      color: var(--primary);
+      outline: none; /* Remove default browser outline */
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: var(--background);
+      z-index: -1;
+      transition: 0.5s;
+    }
+    &:hover::before,
+    &:focus-visible::before {
+      /* Added focus-visible */
+      width: 100%;
+    }
+    &:nth-of-type(2) {
+      background: transparent;
+      color: var(--primary);
+      &:hover,
+      &:focus-visible {
+        /* Added focus-visible */
+        color: var(--background);
+      }
+      &::before {
+        background: var(--primary);
+      }
+    }
+  }
+}
+.home-img {
+  position: relative; // Needed for absolute positioning of icons
+  opacity: 0;
+  animation: zoomIn 1s ease forwards, bubble 4s ease-in-out infinite;
+  animation-delay: 2.1s, 2.1s; // Stagger the start of the bubble animation
+  .image-wrapper {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 8px solid var(--primary-container);
+    animation: imageGlow 3s ease-in-out infinite alternate;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      aspect-ratio: 832 / 1248;
+    }
+  }
+}
+
+.home-sci {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  opacity: 0;
+  animation: slideRight 1s ease forwards;
+  animation-delay: 1.8s;
+
+  a {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background: var(--background);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 1;
+    overflow: hidden;
+    transition: 0.5s;
+    color: var(--primary);
+
+    /* Added bubble animation and staggered delays */
+    animation: bubble 4s ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 2.3s;
+    }
+    &:nth-child(2) {
+      animation-delay: 2.5s;
+    }
+    &:nth-child(3) {
+      animation-delay: 2.7s;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--background);
+      outline: none;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: var(--primary);
+      z-index: -1;
+      transition: 0.5s;
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+      width: 100%;
+    }
+  }
+}
+
+.bubble-deco {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid var(--primary-container);
+  z-index: -1;
+  animation: bubble 7s ease-in-out infinite;
+  &:nth-of-type(2n) {
+    /* Every second bubble, subtle variation */
+    border-color: var(--primary-container-soft, var(--primary-container));
+  }
+  &:nth-of-type(3n) {
+    /* Every third bubble, another subtle variation */
+    opacity: 0.8;
+  }
+  &:nth-of-type(1) {
+    width: 60px;
+    height: 60px;
+    top: 5%;
+    left: 10%;
+    animation-delay: 2.2s;
+  }
+  &:nth-of-type(2) {
+    width: 30px;
+    height: 30px;
+    top: 30%;
+    right: 0%;
+    animation-delay: 2.8s;
+  }
+  &:nth-of-type(3) {
+    width: 45px;
+    height: 45px;
+    bottom: 5%;
+    left: 20%;
+    animation-delay: 3.2s;
+  }
+  &:nth-of-type(4) {
+    width: 25px;
+    height: 25px;
+    top: 60%;
+    left: -2%;
+    animation-delay: 3.7s;
+  }
+  &:nth-of-type(5) {
+    width: 40px;
+    height: 40px;
+    top: -5%;
+    right: 15%;
+    animation-delay: 2.5s;
+  }
+  &:nth-of-type(6) {
+    width: 70px;
+    height: 70px;
+    bottom: -10%;
+    left: 40%;
+    animation-delay: 2.9s;
+  }
+  &:nth-of-type(7) {
+    width: 35px;
+    height: 35px;
+    top: 70%;
+    right: -10%;
+    animation-delay: 3.4s;
+  }
+  &:nth-of-type(8) {
+    width: 55px;
+    height: 55px;
+    top: -10%;
+    left: 35%;
+    animation-delay: 2.1s;
+  }
+  &:nth-of-type(9) {
+    width: 20px;
+    height: 20px;
+    bottom: 20%;
+    left: -15%;
+    animation-delay: 4s;
+  }
+}
+/* --- KEYFRAMES ANIMATIONS --- */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes bubble {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes imageGlow {
+  0% {
+    box-shadow: var(--image-glow-start);
+  }
+  100% {
+    box-shadow: var(--image-glow-end);
+  }
+}
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideTop {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes slideBottom {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* --- RESPONSIVE BREAKPOINTS --- */
+@media (max-width: 1200px) {
+  .home {
+    gap: 4rem;
+  }
+  .home-img .image-wrapper {
+    width: 350px;
+    height: 350px;
+  }
+  .home-content::before {
+    left: -2rem;
+  }
+}
+@media (max-width: 992px) {
+  .home {
+    flex-direction: column-reverse; /* Stack image on top for mobile */
+    gap: 3rem;
+    padding-top: 5rem;
+    text-align: center;
+  }
+  .home-content {
+    max-width: 100%;
+    &::before {
+      display: none;
+    }
+  }
+  .home-content h1 {
+    font-size: 3rem;
+  }
+  .home-content h3 {
+    font-size: 1.8rem;
+  }
+  .btn-box {
+    justify-content: center;
+    width: 100%;
+  }
+  .home-img {
+    margin-bottom: 2rem;
+  }
+  .home-sci {
+    margin-top: 2rem;
+    flex-direction: row;
+  }
+}
+@media (max-width: 768px) {
+  .home-img .image-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+  .home-sci a {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  .bubble-deco {
+    &:nth-of-type(1),
+    &:nth-of-type(6),
+    &:nth-of-type(8) {
+      width: 30px;
+      height: 30px;
+    }
+    &:nth-of-type(3),
+    &:nth-of-type(5) {
+      width: 25px;
+      height: 25px;
+    }
+    &:nth-of-type(2),
+    &:nth-of-type(4),
+    &:nth-of-type(7),
+    &:nth-of-type(9) {
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
+@media (max-width: 480px) {
+  .home-content h1 {
+    font-size: 2.5rem;
+  }
+  .home-content h3 {
+    font-size: 1.5rem;
+  }
+  .btn-box {
+    flex-direction: column;
+    gap: 1rem;
+    height: auto;
+    align-items: center;
+
+    .or-text {
+      display: none;
+    }
+  }
+  .home-img .image-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+  .bubble-deco {
+    display: none;
+  }
+}
+/* --- Accessibility: Reduce Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .home-content h1,
+  .home-content h3,
+  .home-content p,
+  .btn-box,
+  .home-img,
+  .bubble-deco,
+  .home-sci a,
+  .home-content::before {
+    animation: none !important; /* Turn off all animations */
+    opacity: 1 !important; /* Ensure content is visible */
+    transform: none !important; /* Ensure content is in final position */
+  }
+}

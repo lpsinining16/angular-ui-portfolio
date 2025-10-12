@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+.skills-section {
+  position: relative;
+  background-color: var(--section-1-bg);
+  transition: background-color 0.3s ease;
+  overflow: hidden;
+  min-height: 100vh;
+}

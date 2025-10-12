@@ -1,0 +1,133 @@
+<section class="projects-section py-20 relative overflow-hidden font-sans">
+
+  <!-- Reusable bubbles component -->
+   <app-bubbles [bubbles]="bubblesConfig"></app-bubbles>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
+    <h2 class="text-4xl font-bold text-center mb-12 text-light-text dark:text-dark-text">
+      Projects
+    </h2>
+
+    <!-- Refined Loop for Project Groups -->
+    @for (group of groupedProjects(); track group.type) {
+      <h3 class="text-2xl font-semibold mb-6 text-light-text dark:text-dark-text border-b border-gray-300 dark:border-gray-700 pb-2 capitalize">
+        {{ group.type }} Projects
+      </h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        @for (project of group.projects; track project.title) {
+          <div class="project-card flex flex-col rounded-lg shadow-lg overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+            <!-- Card Header -->
+            <div class="project-card-header">
+              <h4 class="text-xl font-bold text-center text-light-primary dark:text-dark-primary">
+                {{ project.title }}
+              </h4>
+              @if (project.company) {
+                <p class="text-sm text-light-text dark:text-dark-text/70 mt-1">
+                  {{ project.company }}
+                </p>
+              }
+            </div>
+
+            <!-- Card Body -->
+            <div class="project-card-body">
+              <p class="mb-4 text-light-text dark:text-dark-text/80 text-sm">{{ project.description }}</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                @for (tech of project.technologies; track tech) {
+                  <span
+                    class="px-2 py-1 text-xs rounded-md bg-light-primary-container dark:bg-dark-primary-container text-light-primary dark:text-dark-primary">
+                    {{ tech }}
+                  </span>
+                }
+              </div>
+
+              <div class="mt-auto">
+                <button class="details-btn w-full" (click)="openProjectModal(project)">View Details</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Modal -->
+  @if (selectedProject()) {
+    <div class="modal-backdrop" (click)="closeProjectModal()">
+      <div 
+        class="modal-content" 
+        (click)="$event.stopPropagation()">
+        <!-- Simplified Title Bar -->
+        <div class="modal-title-bar">
+          <div class="modal-title">{{ selectedProject()?.title }}</div>
+          <button 
+            class="modal-close-btn" 
+            (click)="closeProjectModal()">×</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          @if (selectedProject()?.company) {
+            <p class="text-sm text-light-text dark:text-dark-text/70 mb-4">{{ selectedProject()?.company }}</p>
+          }
+
+          <p class="mb-4 text-light-text dark:text-dark-text/80">{{ selectedProject()?.description }}</p>
+
+          @if (selectedProject()?.technologies?.length) {
+            <div class="flex flex-wrap gap-2 mb-6">
+              @for (tech of selectedProject()?.technologies; track tech) {
+                <span class="px-2 py-1 text-xs rounded-md bg-light-primary-container dark:bg-dark-primary-container text-light-primary dark:text-dark-primary">
+                  {{ tech }}
+                </span>
+              }
+            </div>
+          }
+
+          <h3 class="text-xl font-semibold mb-4 border-b pb-2 text-light-text dark:text-dark-text">Systems</h3>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            @for (sys of selectedProject()?.systems; track sys.title) {
+              <div class="system-card">
+                <!-- System Card Header -->
+                <div class="system-card-header">
+                  <h4 class="font-semibold text-lg text-light-primary dark:text-dark-primary">
+                    {{ sys.title }}
+                  </h4>
+                </div>
+                <!-- System Card Body -->
+                <div class="system-card-body">
+                  <p class="text-sm text-light-text dark:text-dark-text/80 mb-3">{{ sys.description }}</p>
+
+                  @if (sys.coreFunctions?.length) {
+                     <ul class="list-disc pl-5 mb-3 space-y-1 text-sm text-light-text dark:text-dark-text/80">
+                      @for (cf of sys.coreFunctions; track cf.function) {
+                        <li>
+                          <span class="font-medium">{{ cf.function }}</span> — {{ cf.description }}
+                        </li>
+                      }
+                    </ul>
+                  }
+
+                  <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    @if (sys.link && sys.link.trim() !== '') {
+                      <a [href]="sys.link" target="_blank"
+                        class="text-sm text-light-primary dark:text-dark-primary hover:underline">
+                        View more →
+                      </a>
+                    }
+                    @for (t of sys.tags; track t) {
+                      <span class="text-xs px-2 py-1 rounded bg-light-primary/10 dark:bg-dark-primary/10 text-light-primary dark:text-dark-primary font-medium">
+                        {{ t }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</section>
+

@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+main {
+  max-width: 100% !important;
+  margin: 0 auto;
+}
+
+// Apply default spacing to all sections EXCEPT home
+main > * {
+  width: 100%;
+  // margin-bottom: 4rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Make Home a full-screen hero section
+app-home {
+  min-height: calc(100vh - 80px); // adjust header height if needed
+  display: flex;
+  align-items: center; // vertical center
+  justify-content: center; // optional, or use space-between if text+image
+  padding: 0; // remove extra top/bottom padding
+  margin-bottom: 0; // no bottom gap
+}

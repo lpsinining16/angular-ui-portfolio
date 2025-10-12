@@ -1,0 +1,10 @@
+<!-- The container's class is now just 'bubbles' -->
+<div class="bubbles">
+  <!-- 
+    The bubble element now uses property binding for both the static class
+    and the dynamic styles, which are converted to a string via a helper method.
+  -->
+  @for (bubble of bubbles; track $index) {
+  <span [class]="'bubble'" [style]="getStyleString(bubble.customStyles)"></span>
+  }
+</div>

@@ -1,0 +1,157 @@
+<header
+  id="app-bar"
+  [class.shrunk]="isShrunk()"
+  class="fixed top-0 left-0 w-full z-50"
+>
+  <div class="nav-wrapper">
+    <!-- Logo -->
+    <a
+      routerLink="/"
+      fragment="home"
+      (click)="onNavLinkClick('home')"
+      class="logo"
+    >
+      larscript.io
+    </a>
+
+    <!-- Desktop Menu -->
+    <div class="desktop-menu">
+      <a
+        routerLink="/"
+        fragment="about"
+        (click)="onNavLinkClick('about')"
+        class="menu-link"
+      >
+        About
+      </a>
+      <a
+        routerLink="/"
+        fragment="skills"
+        (click)="onNavLinkClick('skills')"
+        class="menu-link"
+      >
+        Skills
+      </a>
+      <a
+        routerLink="/"
+        fragment="projects"
+        (click)="onNavLinkClick('projects')"
+        class="menu-link"
+      >
+        Projects
+      </a>
+      <a
+        routerLink="/"
+        fragment="career"
+        (click)="onNavLinkClick('career')"
+        class="menu-link"
+      >
+        Career
+      </a>
+      <a
+        routerLink="/"
+        fragment="contact"
+        (click)="onNavLinkClick('contact')"
+        class="contact-btn"
+      >
+        Contact Me
+      </a>
+
+      <div class="separator"></div>
+
+      <!-- Theme Toggle -->
+      <button (click)="toggleTheme()" class="control-btn">
+        @if (themeService.theme() === 'light') {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          ></path>
+        </svg>
+        } @else {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          ></path>
+        </svg>
+        }
+      </button>
+
+      <!-- Sound Toggle -->
+      <button (click)="toggleSound()" class="control-btn">
+        @if (soundService.isMuted()) {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.683 4.895 11 5.23 11 5.707V18.293c0 .477-.317.812-.707.293L5.586 15zM17 14l-4-4m0 4l4-4"
+          ></path>
+        </svg>
+        } @else {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.683 4.895 11 5.23 11 5.707V18.293c0 .477-.317.812-.707.293L5.586 15z"
+          ></path>
+        </svg>
+        }
+      </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button (click)="toggleMenu()" class="mobile-toggle-btn">
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16m-7 6h7"
+        ></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  @if (isMenuOpen()) {
+  <div class="mobile-menu">
+    <a (click)="onNavLinkClick('about')" routerLink="/" fragment="about">About</a>
+    <a (click)="onNavLinkClick('skills')" routerLink="/" fragment="skills"
+      >Skills</a
+    >
+    <a (click)="onNavLinkClick('projects')" routerLink="/" fragment="projects"
+      >Projects</a
+    >
+    <a (click)="onNavLinkClick('career')" routerLink="/" fragment="career"
+      >Career</a
+    >
+    <a (click)="onNavLinkClick('contact')" routerLink="/" fragment="contact"
+      >Contact</a
+    >
+    <!-- --- ERROR FIX --- -->
+    <!-- Replaced 'border-light-outline' and 'dark:border-dark-outline' -->
+    <!-- with standard Tailwind classes for a consistent look. -->
+    <div class="mobile-controls border-t border-slate-200 dark:border-slate-700">
+      <button (click)="toggleTheme()" class="mobile-control-btn">
+        Toggle Theme
+      </button>
+      <button (click)="toggleSound()" class="mobile-control-btn">
+        {{ soundService.isMuted() ? 'Unmute' : 'Mute' }}
+      </button>
+    </div>
+  </div>
+  }
+</header>
+
