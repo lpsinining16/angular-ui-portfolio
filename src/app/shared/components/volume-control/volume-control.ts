@@ -1,16 +1,17 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
   signal,
-  PLATFORM_ID,
-  WritableSignal,
   computed,
+  HostBinding,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SoundService } from '../../../core/services/sound';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-volume-control',
@@ -20,88 +21,53 @@ import { SoundService } from '../../../core/services/sound';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VolumeControl {
-  soundService = inject(SoundService);
-  private platformId = inject(PLATFORM_ID);
+  // --- SERVICE INJECTIONS ---
+  readonly soundService = inject(SoundService);
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
-  isHoveringIconOrSlider = signal(false);
-  isDraggingSlider = signal(false);
-  isMobileDevice: WritableSignal<boolean> = signal(false);
+  // --- STATE SIGNALS ---
+  private readonly isHovering = signal(false);
+  private readonly isDragging = signal(false);
 
-  isSliderVisible = computed(() => {
-    if (this.isMobileDevice()) {
-      return !this.soundService.isMuted();
-    }
-    return (
-      (!this.soundService.isMuted() && this.isHoveringIconOrSlider()) ||
-      this.isDraggingSlider() ||
-      (!this.soundService.isMuted() && this.soundService.volume() > 0)
-    );
+  /** Responsive check for mobile viewport */
+  private readonly isMobile = toSignal(
+    this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((result) => result.matches)),
+    { initialValue: false }
+  );
+
+  // --- COMPUTED SIGNALS ---
+  /** Determines if the volume slider should be visible, simplifying the logic */
+  readonly isSliderVisible = computed(() => {
+    if (this.soundService.isMuted()) return false;
+    if (this.isMobile()) return true; // Always show on mobile if not muted
+    return this.isHovering() || this.isDragging();
   });
 
-  constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.checkIsMobile();
-      window.addEventListener('resize', () => this.checkIsMobile());
-    }
-
-    effect(() => {
-      if (
-        !this.isMobileDevice() &&
-        !this.soundService.isMuted() &&
-        this.soundService.volume() > 0 &&
-        !this.isDraggingSlider()
-      ) {
-        this.isHoveringIconOrSlider.set(true);
-      } else if (
-        !this.isMobileDevice() &&
-        this.soundService.isMuted() &&
-        !this.isDraggingSlider()
-      ) {
-        this.isHoveringIconOrSlider.set(false);
-      }
-    });
+  // --- HOST BINDINGS ---
+  @HostBinding('class.slider-visible') get sliderVisible() {
+    return this.isSliderVisible();
   }
 
-  private checkIsMobile(): void {
-    this.isMobileDevice.set(window.innerWidth < 768);
-  }
-
+  // --- PUBLIC METHODS ---
   onVolumeChange(newVolume: number): void {
     this.soundService.setVolume(newVolume);
   }
 
-  toggleMuteAndVolume(): void {
+  toggleMute(): void {
     this.soundService.toggleMute();
   }
 
-  // Called when mouse enters either the icon or the slider area
-  showSlider(): void {
-    if (!this.isMobileDevice() && !this.soundService.isMuted()) {
-      this.isHoveringIconOrSlider.set(true);
-    }
+  // --- EVENT HANDLERS for hover and drag state ---
+  onMouseEnter(): void {
+    this.isHovering.set(true);
   }
-
-  // Called when mouse leaves either the icon or the slider area
-  hideSlider(): void {
-    if (!this.isMobileDevice()) {
-      // Only set hovering to false if not currently dragging the slider
-      if (!this.isDraggingSlider()) {
-        this.isHoveringIconOrSlider.set(false);
-      }
-    }
+  onMouseLeave(): void {
+    this.isHovering.set(false);
   }
-
-  startDragging(): void {
-    if (!this.isMobileDevice()) {
-      this.isDraggingSlider.set(true);
-    }
+  onDragStart(): void {
+    this.isDragging.set(true);
   }
-
-  stopDragging(): void {
-    if (!this.isMobileDevice()) {
-      this.isDraggingSlider.set(false);
-      if (!this.isHoveringIconOrSlider() && !this.soundService.isMuted()) {
-      }
-    }
+  onDragEnd(): void {
+    this.isDragging.set(false);
   }
 }

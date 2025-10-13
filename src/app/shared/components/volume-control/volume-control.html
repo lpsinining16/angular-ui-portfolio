@@ -1,40 +1,29 @@
-<div class="flex items-center h-full flex-grow">
-  <!-- Mute/Unmute Button (Always a circle) -->
-  <button
-    (click)="toggleMuteAndVolume()"
-    (mouseenter)="!isMobileDevice() && showSlider()"
-    (mouseleave)="!isMobileDevice() && hideSlider()"
-    class="volume-icon-btn focus:outline-none transition-colors duration-200 flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0"
-    [class.text-primary-muted]="soundService.isMuted() || soundService.volume() === 0"
-    [class.text-primary]="!soundService.isMuted() && soundService.volume() > 0"
-  >
-    <ng-container *ngIf="soundService.isMuted() || soundService.volume() === 0">
-      <i class="bx bx-volume-mute text-xl"></i>
-    </ng-container>
-    <ng-container *ngIf="!soundService.isMuted() && soundService.volume() > 0">
-      <i class="bx bx-volume-full text-xl"></i>
-    </ng-container>
+<!-- 
+  REFINEMENT & ACCESSIBILITY:
+  - A single host container with (mouseenter) and (mouseleave) simplifies hover logic.
+  - The button now has a clear `aria-label` describing its function.
+  - The range slider has an `aria-label` for screen readers.
+  - Icons are marked with `aria-hidden` as they are decorative.
+  - Using `@switch` for icon state is cleaner than multiple `@if` blocks.
+-->
+<div class="volume-control-container" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+
+  <!-- Mute/Unmute Button -->
+  <button type="button" (click)="toggleMute()" class="volume-icon-btn" aria-label="Toggle sound mute">
+    @switch (true) {
+    @case (soundService.isMuted() || soundService.volume() === 0) {
+    <i class="bx bx-volume-mute text-xl" aria-hidden="true"></i>
+    }
+    @default {
+    <i class="bx bx-volume-full text-xl" aria-hidden="true"></i>
+    }
+    }
   </button>
 
-  <div
-    class="volume-slider-wrapper"
-    [class.volume-slider-wrapper-visible]="isSliderVisible()"
-    [class.volume-slider-wrapper-hidden]="!isSliderVisible()"
-    (mouseenter)="!isMobileDevice() && showSlider()"
-    (mouseleave)="!isMobileDevice() && hideSlider()"
-  >
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      [ngModel]="soundService.volume()"
-      (ngModelChange)="onVolumeChange($event)"
-      (mousedown)="startDragging()"
-      (mouseup)="stopDragging()"
-      (touchstart)="startDragging()"
-      (touchend)="stopDragging()"
-      class="volume-slider h-2 rounded-lg appearance-none cursor-pointer bg-secondary-track dark:bg-secondary-track-dark [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-moz-range-thumb]:h-4 [&::-moz-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary"
-    />
+  <!-- Volume Slider -->
+  <div class="volume-slider-wrapper">
+    <input type="range" min="0" max="1" step="0.01" aria-label="Volume control" [ngModel]="soundService.volume()"
+      (ngModelChange)="onVolumeChange($event)" (mousedown)="onDragStart()" (mouseup)="onDragEnd()"
+      (touchstart)="onDragStart()" (touchend)="onDragEnd()" class="volume-slider" />
   </div>
 </div>

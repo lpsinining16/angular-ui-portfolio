@@ -1,74 +1,95 @@
 :host {
-  @apply flex items-center h-full flex-grow;
+  // The host element itself is the positioning context.
+  @apply relative flex items-center;
 }
 
+// This container is now the simple, reliable wrapper for the controls.
+// It is always visible and lays out its children.
+.volume-control-container {
+  @apply relative flex items-center h-full;
+}
+
+/* --- Icon Button --- */
 .volume-icon-btn {
-  @apply flex items-center justify-center w-10 h-10 rounded-full focus:outline-none transition-colors duration-200 flex-shrink-0;
+  @apply flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0;
   background-color: var(--primary-container);
   color: var(--primary);
+  transition: background-color 0.3s ease;
+  // z-index ensures the button is clickable above the slider track.
+  position: relative;
+  z-index: 20;
 
   &:hover {
     background-color: var(--primary-container-hover);
   }
 
-  &.text-primary-muted {
-    color: var(--primary-muted);
-  }
-
-  &.text-primary {
-    color: var(--primary);
+  .icon {
+    @apply w-6 h-6;
   }
 }
 
-/* --- UPDATED SECTION --- */
+/* --- Slider Wrapper --- */
 .volume-slider-wrapper {
-  @apply flex items-center overflow-hidden rounded-full transition-all ease-out duration-300;
+  /* Desktop: Positioned absolutely to expand from the host's container. */
+  @apply absolute left-0 top-0 h-10 flex items-center rounded-full;
   background-color: var(--primary-container);
-  margin-left: -8px;
-  height: 40px;
-  padding: 0 0.75rem;
-  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  // Padding creates space for the icon so the slider starts after it.
+  padding: 0 0.75rem 0 2.75rem;
   width: 0;
   opacity: 0;
+  z-index: 10;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  overflow: hidden;
+}
 
-  &.volume-slider-wrapper-visible {
-    @apply opacity-100;
+// When the host has the .slider-visible class (driven by component logic),
+// the slider expands to its full width.
+:host(.slider-visible) .volume-slider-wrapper {
+  width: 130px;
+  opacity: 1;
+}
 
-    /* Desktop (hover expand) */
-    width: 96px;
-    margin-left: 0.5rem;
+/* --- Slider Input --- */
+.volume-slider {
+  @apply w-full h-1.5 rounded-lg appearance-none cursor-pointer;
+  background-color: var(--secondary-track);
 
-    /* Mobile: take full space */
-    @media (max-width: 767px) {
-      width: 100%;
-      margin-left: 0.5rem;
-      flex-grow: 1;
-    }
+  &::-webkit-slider-thumb {
+    @apply appearance-none h-4 w-4 rounded-full;
+    background-color: var(--primary);
   }
-
-  .volume-slider {
-    @apply w-full h-2 rounded-lg appearance-none cursor-pointer;
-    background-color: var(--secondary-track);
-    margin: 0;
-
-    &::-webkit-slider-thumb {
-      @apply appearance-none h-4 w-4 rounded-full;
-      background-color: var(--primary);
-    }
-
-    &::-moz-range-thumb {
-      @apply h-4 w-4 rounded-full;
-      background-color: var(--primary);
-    }
-
-    .dark & {
-      background-color: var(--secondary-track-dark);
-      &::-webkit-slider-thumb {
-        background-color: var(--primary);
-      }
-      &::-moz-range-thumb {
-        background-color: var(--primary);
-      }
-    }
+  &::-moz-range-thumb {
+    @apply h-4 w-4 rounded-full border-none;
+    background-color: var(--primary);
   }
 }
+
+/* --- Mobile-Specific Styles --- */
+@media (max-width: 767px) {
+  :host {
+    @apply w-full;
+  }
+
+  .volume-control-container {
+    @apply w-full;
+  }
+
+  // On mobile, the slider is not absolute. It's part of the flex layout.
+  .volume-slider-wrapper {
+    @apply static flex-grow h-10; // 'static' overrides 'absolute'
+    margin-left: 0.5rem;
+    width: auto;
+    opacity: 1;
+    padding: 0 1rem;
+    box-shadow: none;
+    display: none; // It's hidden until the host gets the .slider-visible class
+  }
+  
+  // On mobile, the slider appears when unmuted.
+  :host(.slider-visible) .volume-slider-wrapper {
+    display: flex;
+    width: auto; // Ensure it takes up the flex-grow space
+  }
+}
+

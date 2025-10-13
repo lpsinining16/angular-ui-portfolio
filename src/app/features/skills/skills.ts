@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SoundService } from '../../core/services/sound';
-import { apiService } from '../../core/services/api';
+import { ApiService } from '../../core/services/api';
 import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
 @Component({
@@ -12,7 +12,7 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Skills {
-  apiService = inject(apiService);
+  apiService = inject(ApiService);
   soundService = inject(SoundService);
 
   skills = this.apiService.skills;

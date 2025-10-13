@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { apiService } from '../../core/services/api';
+import { ApiService } from '../../core/services/api';
 import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
 @Component({
@@ -10,7 +10,7 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Contact {
-  private apiService = inject(apiService);
+  private apiService = inject(ApiService);
   profile = this.apiService.profile;
 
    bubblesConfig: Bubble[] = [

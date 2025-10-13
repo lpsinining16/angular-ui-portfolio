@@ -10,52 +10,47 @@ import {
 import { ThemeService } from '../../services/theme';
 import { SoundService } from '../../services/sound';
 import { NavigationService } from '../../services/navigation';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs';
 import { VolumeControl } from '../../../shared/components/volume-control/volume-control';
+import { ApiService } from '../../services/api';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, VolumeControl],
+  imports: [CommonModule, VolumeControl, RouterLink],
   templateUrl: './header.html',
   styleUrls: ['./header.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
-  themeService = inject(ThemeService);
-  soundService = inject(SoundService);
-  navigationService = inject(NavigationService);
-  router = inject(Router);
+  // --- SERVICE INJECTIONS ---
+  readonly themeService = inject(ThemeService);
+  readonly navigationService = inject(NavigationService);
+  private readonly soundService = inject(SoundService);
+  private readonly apiService = inject(ApiService);
 
-  scrollTop = signal(0);
-  activeFragment = signal<string | null>('home'); // Default to home
+  // --- STATE SIGNALS ---
+  readonly navLinks = this.apiService.navLinks;
+  readonly isMenuOpen = signal(false);
+  private readonly scrollTop = signal(0);
 
-  isShrunk = computed(
-    () =>
-      this.scrollTop() > 50 || (this.activeFragment() !== null && this.activeFragment() !== 'home')
-  );
+  // --- COMPUTED SIGNALS ---
+  /** Determines if the header should be in its "shrunk" state */
+  readonly isShrunk = computed(() => {
+    const activeFragment = this.navigationService.activeFragment();
+    return this.scrollTop() > 50 || (activeFragment !== null && activeFragment !== 'home');
+  });
 
-  isMenuOpen = signal(false);
-
-  constructor() {
-    // Listen to router events to know which section is active
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        const fragment = this.router.parseUrl(event.urlAfterRedirects).fragment;
-        this.activeFragment.set(fragment || 'home');
-      });
-  }
-
+  // --- HOST BINDINGS ---
   @HostListener('window:scroll')
   onWindowScroll(): void {
     this.scrollTop.set(window.scrollY);
   }
 
+  // --- PUBLIC METHODS ---
   toggleTheme(): void {
     this.themeService.toggleTheme();
-    this.soundService.playSound('clickThemeSwitcher');
+    this.soundService.playSound('click');
   }
 
   toggleMenu(): void {
@@ -66,7 +61,7 @@ export class Header {
   onNavLinkClick(fragment: string): void {
     this.navigationService.navigateToFragment(fragment);
     if (this.isMenuOpen()) {
-      this.toggleMenu();
+      this.isMenuOpen.set(false);
     }
   }
 }

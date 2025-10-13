@@ -1,5 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 
+export interface NavLink {
+  label: string;
+  fragment: string;
+  isContact?: boolean;
+}
+
 export interface Profile {
   name: string;
   headline: string;
@@ -54,7 +60,17 @@ export interface Project {
 @Injectable({
   providedIn: 'root',
 })
-export class apiService {
+export class ApiService {
+
+  // --- NAVIGATION ---
+  readonly navLinks = signal<NavLink[]>([
+    { label: 'About', fragment: 'about' },
+    { label: 'Skills', fragment: 'skills' },
+    { label: 'Projects', fragment: 'projects' },
+    { label: 'Career', fragment: 'career' },
+    { label: 'Contact Me', fragment: 'contact', isContact: true },
+  ]);
+
   profile = signal<Profile>({
     name: 'Larry Sinining',
     headline: 'Software Engineer | Front-End Engineer',

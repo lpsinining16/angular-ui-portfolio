@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { apiService, Project } from '../../core/services/api';
+import { ApiService, Project } from '../../core/services/api';
 import { SoundService } from '../../core/services/sound';
 import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
@@ -12,7 +12,7 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Projects {
-  private apiService = inject(apiService);
+  private apiService = inject(ApiService);
   private soundService = inject(SoundService);
   private projects = this.apiService.projects;
 

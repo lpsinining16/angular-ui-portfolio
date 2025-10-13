@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { apiService } from '../../core/services/api';
+import { ApiService } from '../../core/services/api';
 import { NavigationService } from '../../core/services/navigation';
 import { NgOptimizedImage } from '@angular/common';
 import { SoundService } from '../../core/services/sound';
@@ -12,7 +12,7 @@ import { SoundService } from '../../core/services/sound';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  apiService = inject(apiService);
+  apiService = inject(ApiService);
   soundService = inject(SoundService);
   navigationService = inject(NavigationService);
 
