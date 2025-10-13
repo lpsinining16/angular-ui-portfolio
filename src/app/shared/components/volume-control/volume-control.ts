@@ -100,13 +100,7 @@ export class VolumeControl {
   stopDragging(): void {
     if (!this.isMobileDevice()) {
       this.isDraggingSlider.set(false);
-      // Immediately re-evaluate hover state after drag stops
-      // If mouse is no longer over the component, it should hide
-      // If the mouse is still over the icon, for example, it will remain true
       if (!this.isHoveringIconOrSlider() && !this.soundService.isMuted()) {
-        // Trigger a re-evaluation of visibility based on current mouse position
-        // If the mouse has left the overall component, isHoveringIconOrSlider will already be false,
-        // and the computed signal will then hide the slider.
       }
     }
   }

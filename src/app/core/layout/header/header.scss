@@ -3,8 +3,7 @@
 }
 
 header#app-bar {
-  // Normal state
-  padding: 1.25rem 1rem; // increased from 1rem top/bottom → 1.25rem
+  padding: 1.25rem 1rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   .nav-wrapper {
@@ -13,22 +12,23 @@ header#app-bar {
     align-items: center;
     margin: 0 auto;
     width: 100%;
-    padding: 0 2rem; // wider side padding for breathing room
+    padding: 0 2rem;
     transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
       padding 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+      backdrop-filter 0.4s ease;
   }
 
   &.shrunk {
-    padding-top: 1rem; // was 0.75rem
-    padding-bottom: 1rem; // was 0.75rem
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 
     .nav-wrapper {
       width: calc(100% - 2rem);
       max-width: 1200px;
       border-radius: 9999px;
-      padding: 1rem 2.5rem; // slightly bigger inside padding
+      padding: 1rem 2.5rem;
       @apply bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-md;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
       transform: translateY(-4px);
@@ -36,6 +36,7 @@ header#app-bar {
   }
 }
 
+/* Smooth logo size transition */
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
@@ -48,42 +49,39 @@ header#app-bar.shrunk .logo {
   font-size: 1.25rem;
 }
 
-// Right side of the nav
+/* Desktop menu */
 .desktop-menu {
-  display: none; // Hidden by default
+  display: none;
   @media (min-width: 768px) {
-    // Visible on medium screens and up
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 }
 
+/* Menu links */
 .menu-link {
   padding: 0.5rem 0.75rem;
   border-radius: 9999px;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s, background-color 0.3s;
   color: var(--text-color);
+  transition: color 0.3s, background-color 0.3s;
   &:hover {
     color: var(--primary);
     background-color: var(--primary-container);
   }
 }
 
+/* Contact button */
 .contact-btn {
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s;
-  // color: #fff;
-  // background-color: var(--primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  @apply bg-light-primary text-white; /* Light mode: primary bg, white text */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  @apply bg-light-primary text-white;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     transform: scale(1.05);
@@ -95,6 +93,7 @@ header#app-bar.shrunk .logo {
   }
 }
 
+/* Separator line */
 .separator {
   height: 24px;
   width: 1px;
@@ -102,6 +101,7 @@ header#app-bar.shrunk .logo {
   margin: 0 0.5rem;
 }
 
+/* Icon buttons */
 .control-btn {
   display: flex;
   align-items: center;
@@ -109,8 +109,8 @@ header#app-bar.shrunk .logo {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  transition: background-color 0.3s;
   background-color: var(--primary-container);
+  transition: background-color 0.3s ease, transform 0.3s ease;
 
   .icon {
     width: 24px;
@@ -120,37 +120,36 @@ header#app-bar.shrunk .logo {
 
   &:hover {
     background-color: var(--primary-container-hover);
+    transform: scale(1.1);
   }
 }
 
-// Mobile-specific styles
+/* Mobile menu */
 .mobile-menu {
   background-color: var(--background);
   color: var(--text-color);
-  @apply p-4 shadow-lg; // Keep other Tailwind utility classes
-
+  @apply p-4 shadow-lg;
   position: absolute;
-  top: 100%; // Position it right below the app bar
+  top: 100%;
   left: 0;
   width: 100%;
   box-sizing: border-box;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 
   a {
     @apply block py-3 px-4 rounded-md transition-colors duration-200;
-    color: var(--text-color); // Ensure text color is picked up
-
-    // CORRECTED: Use --primary-container-hover for the background
+    color: var(--text-color);
     &:hover {
       background-color: var(--primary-container-hover);
     }
   }
 
   .mobile-controls {
-    @apply mt-4 pt-4 flex flex-col gap-2; // Using flex-col and gap for vertical spacing if controls are stacked
+    @apply mt-4 pt-4 flex flex-col gap-2;
   }
 
   .mobile-control-row {
-    @apply flex items-center justify-between gap-2; // For the requested horizontal layout
+    @apply flex items-center justify-between gap-2;
   }
 
   .mobile-control-btn {
@@ -174,3 +173,40 @@ header#app-bar.shrunk .logo {
     }
   }
 }
+
+header#app-bar.shrunk .mobile-menu {
+  width: calc(100% - 2rem);
+  max-width: 1200px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-2px);
+  border-radius: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  opacity: 0.98;
+
+  @apply bg-light-surface/90 dark:bg-dark-surface/80 backdrop-blur-md shadow-lg;
+
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
+}
+
+header#app-bar .mobile-menu.open {
+  @apply bg-light-surface dark:bg-dark-surface; /* solid base */
+  backdrop-filter: none; /* remove blur */
+  background-color: rgba(20, 20, 30, 0.98); /* near-solid dark tone */
+  opacity: 1; /* fully visible */
+  transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1); /* soft elevation */
+}
+
+header#app-bar {
+  will-change: transform, backdrop-filter, box-shadow;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1); // smoother ease-out
+}
+
+header#app-bar .nav-wrapper {
+  transition-duration: 0.6s;
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+

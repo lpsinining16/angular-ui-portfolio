@@ -1,4 +1,3 @@
-// header.ts
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
