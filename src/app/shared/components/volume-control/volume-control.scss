@@ -1,0 +1,71 @@
+:host {
+  @apply flex items-center h-full flex-grow; // This already allows the component to grow
+}
+
+.volume-icon-btn {
+  @apply flex items-center justify-center w-10 h-10 rounded-full focus:outline-none transition-colors duration-200 flex-shrink-0;
+
+  background-color: var(--primary-container);
+  color: var(--primary);
+  &:hover {
+    background-color: var(--primary-container-hover);
+  }
+
+  &.text-primary-muted {
+    color: var(--primary-muted);
+  }
+  &.text-primary {
+    color: var(--primary);
+  }
+}
+
+.volume-slider-wrapper {
+  @apply flex items-center overflow-hidden rounded-full;
+
+  background-color: var(--primary-container);
+  margin-left: -8px;
+  height: 40px;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+
+  @apply w-0 opacity-0;
+  transition: width 0.3s ease-out, opacity 0.3s ease-out, margin-left 0.3s ease-out,
+    padding 0.3s ease-out;
+
+  &.volume-slider-wrapper-visible {
+    @apply opacity-100;
+
+    width: 96px;
+    margin-left: 0.5rem;
+    padding: 0 0.75rem; // Inner padding for the slider visual
+
+    @screen sm {
+      width: 100%;
+    }
+  }
+
+  .volume-slider {
+    @apply w-full h-2 rounded-lg appearance-none cursor-pointer;
+    background-color: var(--secondary-track);
+    margin: 0;
+
+    &::-webkit-slider-thumb {
+      @apply appearance-none h-4 w-4 rounded-full;
+      background-color: var(--primary);
+    }
+    &::-moz-range-thumb {
+      @apply h-4 w-4 rounded-full;
+      background-color: var(--primary);
+    }
+
+    .dark & {
+      background-color: var(--secondary-track-dark);
+      &::-webkit-slider-thumb {
+        background-color: var(--primary);
+      }
+      &::-moz-range-thumb {
+        background-color: var(--primary);
+      }
+    }
+  }
+}

@@ -59,10 +59,6 @@ export class Header {
     this.soundService.playSound('clickThemeSwitcher');
   }
 
-  toggleSound(): void {
-    this.soundService.toggleMute();
-  }
-
   toggleMenu(): void {
     this.isMenuOpen.update((isOpen) => !isOpen);
     this.soundService.playSound('click');

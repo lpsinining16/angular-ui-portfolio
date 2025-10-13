@@ -14,7 +14,6 @@ header#app-bar {
     margin: 0 auto;
     width: 100%;
     padding: 0 2rem; // wider side padding for breathing room
-
     transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
       padding 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -79,13 +78,20 @@ header#app-bar.shrunk .logo {
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s;
-  color: #fff;
-  background-color: var(--primary);
+  // color: #fff;
+  // background-color: var(--primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @apply bg-light-primary text-white; /* Light mode: primary bg, white text */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark & {
+    @apply bg-dark-primary-container text-dark-primary;
   }
 }
 
@@ -118,19 +124,53 @@ header#app-bar.shrunk .logo {
 }
 
 // Mobile-specific styles
-.mobile-toggle-btn {
-  @apply md:hidden p-2 rounded-full text-light-text dark:text-dark-text;
-}
-
 .mobile-menu {
-  @apply md:hidden bg-light-surface dark:bg-dark-surface shadow-lg mt-2 rounded-lg overflow-hidden;
-  a {
-    @apply block py-2 px-4 text-sm hover:bg-light-primary-container dark:hover:bg-dark-primary-container;
-  }
-}
+  background-color: var(--background);
+  color: var(--text-color);
+  @apply p-4 shadow-lg; // Keep other Tailwind utility classes
 
-.mobile-control-btn {
-  @apply flex-1 py-2 px-4 rounded-full text-sm;
-  background-color: var(--primary-container);
-  color: var(--on-primary-container);
+  position: absolute;
+  top: 100%; // Position it right below the app bar
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  a {
+    @apply block py-3 px-4 rounded-md transition-colors duration-200;
+    color: var(--text-color); // Ensure text color is picked up
+
+    // CORRECTED: Use --primary-container-hover for the background
+    &:hover {
+      background-color: var(--primary-container-hover);
+    }
+  }
+
+  .mobile-controls {
+    @apply mt-4 pt-4 flex flex-col gap-2; // Using flex-col and gap for vertical spacing if controls are stacked
+  }
+
+  .mobile-control-row {
+    @apply flex items-center justify-between gap-2; // For the requested horizontal layout
+  }
+
+  .mobile-control-btn {
+    @apply w-full py-2 px-4 rounded-full text-center;
+    background-color: var(--primary-container);
+    color: var(--primary);
+    &:hover {
+      background-color: var(--primary-container-hover);
+    }
+  }
+
+  .mobile-control-btn-icon {
+    @apply flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0;
+    background-color: var(--primary-container);
+    color: var(--primary);
+    &:hover {
+      background-color: var(--primary-container-hover);
+    }
+    .icon {
+      @apply w-6 h-6;
+    }
+  }
 }
