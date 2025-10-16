@@ -1,13 +1,4 @@
-<!-- 
-  REFINEMENT & ACCESSIBILITY:
-  - A single host container with (mouseenter) and (mouseleave) simplifies hover logic.
-  - The button now has a clear `aria-label` describing its function.
-  - The range slider has an `aria-label` for screen readers.
-  - Icons are marked with `aria-hidden` as they are decorative.
-  - Using `@switch` for icon state is cleaner than multiple `@if` blocks.
--->
 <div class="volume-control-container" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-
   <!-- Mute/Unmute Button -->
   <button type="button" (click)="toggleMute()" class="volume-icon-btn" aria-label="Toggle sound mute">
     @switch (true) {

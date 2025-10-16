@@ -6,6 +6,7 @@ import {
   signal,
   computed,
   HostBinding,
+  input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SoundService } from '../../../core/services/sound';
@@ -21,6 +22,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VolumeControl {
+  isShrunk = input(false);
+
   // --- SERVICE INJECTIONS ---
   readonly soundService = inject(SoundService);
   private readonly breakpointObserver = inject(BreakpointObserver);
@@ -38,6 +41,8 @@ export class VolumeControl {
   // --- COMPUTED SIGNALS ---
   /** Determines if the volume slider should be visible, simplifying the logic */
   readonly isSliderVisible = computed(() => {
+    if (this.isShrunk()) return false; 
+    
     if (this.soundService.isMuted()) return false;
     if (this.isMobile()) return true; // Always show on mobile if not muted
     return this.isHovering() || this.isDragging();

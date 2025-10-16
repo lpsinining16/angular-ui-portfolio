@@ -51,6 +51,7 @@ header#app-bar.shrunk {
 // --- Desktop Navigation & Controls ---
 .desktop-menu {
   @apply hidden md:flex items-center gap-2;
+  overflow: visible !important;
 }
 
 .menu-link {

@@ -18,7 +18,7 @@ export class Home {
 
   profile = this.apiService.profile;
   skillIcons = this.apiService.skillIcons;
-  decorativeBubbles = new Array(9).fill(1); // decorative bubbles
+  decorativeBubbles = new Array(12).fill(1); // decorative bubbles
 
   onReadAboutMeClick(): void {
     this.soundService.playSound('click');

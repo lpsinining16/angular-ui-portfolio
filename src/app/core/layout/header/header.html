@@ -1,12 +1,3 @@
-<!-- 
-  ACCESSIBILITY & STRUCTURE:
-  - <header role="banner"> defines the main header landmark.
-  - [class.shrunk] applies styles based on the isShrunk() signal.
-  - <nav aria-label="Main Navigation"> provides a landmark for assistive tech.
-  - Buttons have explicit aria-labels for clarity.
-  - Mobile menu button uses aria-expanded to indicate state.
-  - Active links use [attr.aria-current]="'page'" for accessibility.
--->
 <header id="app-bar" role="banner" [class.shrunk]="isShrunk()" class="fixed top-0 left-0 w-full z-50">
   <div class="nav-wrapper">
     <!-- Logo -->
@@ -45,7 +36,7 @@
           }
         }
       </button>
-      <app-volume-control></app-volume-control>
+      <app-volume-control [isShrunk]="isShrunk()"></app-volume-control>
     </nav>
 
     <!-- Mobile Menu Toggle Button -->
