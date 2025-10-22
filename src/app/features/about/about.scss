@@ -3,3 +3,199 @@
   background-color: var(--section-2-bg);
   transition: background-color 0.3s ease;
 }
+
+@keyframes appleMusicDots {
+  0%,
+  100% {
+    transform: scale(0.5) translate(0, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.1) translate(var(--x-translate, 20px), var(--y-translate, -30px));
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.7;
+  }
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--primary-container);
+  opacity: 0;
+  animation: appleMusicDots 10s infinite ease-in-out;
+  box-shadow: 0 0 15px var(--primary-container);
+
+  /* This is the magic: Assign random properties to each dot.
+    We use --x-translate and --y-translate CSS variables to give each dot a unique path.
+  */
+
+  &:nth-child(1) {
+    --x-translate: 80px;
+    --y-translate: -120px;
+    width: 8px;
+    height: 8px;
+    animation-delay: 0s;
+    animation-duration: 8s;
+  }
+  &:nth-child(2) {
+    --x-translate: -100px;
+    --y-translate: 100px;
+    animation-delay: -1s;
+    animation-duration: 12s;
+  }
+  &:nth-child(3) {
+    --x-translate: 120px;
+    --y-translate: 50px;
+    width: 10px;
+    height: 10px;
+    animation-delay: -2s;
+    animation-duration: 9s;
+    background-color: var(--primary-container-soft);
+  }
+  &:nth-child(4) {
+    --x-translate: -130px;
+    --y-translate: -80px;
+    animation-delay: -3s;
+    animation-duration: 11s;
+  }
+  &:nth-child(5) {
+    --x-translate: 50px;
+    --y-translate: 140px;
+    width: 14px;
+    height: 14px;
+    animation-delay: -4s;
+    animation-duration: 7s;
+  }
+  &:nth-child(6) {
+    --x-translate: -60px;
+    --y-translate: 110px;
+    animation-delay: -5s;
+    animation-duration: 10s;
+    background-color: var(--primary-container-soft);
+  }
+  &:nth-child(7) {
+    --x-translate: 110px;
+    --y-translate: -70px;
+    width: 8px;
+    height: 8px;
+    animation-delay: -6s;
+    animation-duration: 13s;
+  }
+  &:nth-child(8) {
+    --x-translate: -140px;
+    --y-translate: 30px;
+    animation-delay: -7s;
+    animation-duration: 8s;
+  }
+  &:nth-child(9) {
+    --x-translate: 90px;
+    --y-translate: 90px;
+    width: 10px;
+    height: 10px;
+    animation-delay: -8s;
+    animation-duration: 11s;
+    background-color: var(--primary-container-soft);
+  }
+  &:nth-child(10) {
+    --x-translate: -80px;
+    --y-translate: -130px;
+    animation-delay: -9s;
+    animation-duration: 9s;
+  }
+  &:nth-child(11) {
+    --x-translate: 130px;
+    --y-translate: -100px;
+    width: 12px;
+    height: 12px;
+    animation-delay: -10s;
+    animation-duration: 10s;
+  }
+  &:nth-child(12) {
+    --x-translate: -110px;
+    --y-translate: 130px;
+    animation-delay: -11s;
+    animation-duration: 12s;
+  }
+  &:nth-child(13) {
+    --x-translate: 70px;
+    --y-translate: -50px;
+    width: 8px;
+    height: 8px;
+    animation-delay: -4.5s;
+    animation-duration: 8s;
+  }
+  &:nth-child(14) {
+    --x-translate: -50px;
+    --y-translate: 70px;
+    animation-delay: -2.5s;
+    animation-duration: 11s;
+  }
+  &:nth-child(15) {
+    --x-translate: 100px;
+    --y-translate: 140px;
+    width: 10px;
+    height: 10px;
+    animation-delay: -7.5s;
+    animation-duration: 9s;
+    background-color: var(--primary-container-soft);
+  }
+}
+
+/* Modal Animation
+  - Defines the fade-in and slide-up effect for the modal components.
+*/
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-container {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-backdrop {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-panel {
+  animation: modalSlideUp 0.4s ease-out;
+}
+
+/* Career Card Stack
+  - Ensures the cards stack correctly and are ready for transform animations.
+*/
+.career-card-stack {
+  perspective: 1000px; /* Adds depth for potential 3D effects */
+
+  .card {
+    /* This is crucial for the smooth animation.
+      We transition transform, opacity, and z-index.
+    */
+    transform-origin: center bottom;
+    will-change: transform, opacity;
+  }
+}

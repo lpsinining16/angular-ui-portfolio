@@ -1,37 +1,190 @@
-<section class="py-20">
-  <h2 class="text-4xl font-bold text-center mb-12">About Me</h2>
-  <div
-    class="max-w-4xl mx-auto bg-light-surface dark:bg-dark-surface p-8 md:p-12 rounded-xl shadow-lg">
-    <p class="text-lg leading-relaxed text-justify">
-      {{ profile().about }}
-    </p>
-  </div>
+<section id="about" class="py-20 md:py-32 overflow-hidden">
+  <div class="container mx-auto px-6 max-w-6xl">
+    <!-- Main Grid: 5 columns on desktop -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center">
 
-  <h2 class="text-4xl font-bold text-center mt-20 mb-16">Work Experience</h2>
-  <div class="relative max-w-4xl mx-auto">
-    <div class="absolute left-1/2 w-0.5 h-full bg-light-primary-container dark:bg-dark-primary-container -translate-x-1/2"></div>
-    @for (job of workExperience(); track job.title; let i = $index) {
-    <div
-      class="mb-12 flex items-center w-full"
-      [class.justify-start]="i % 2 === 0"
-      [class.justify-end]="i % 2 !== 0">
-      <div class="w-1/2" [class.pr-8]="i % 2 === 0" [class.pl-8]="i % 2 !== 0">
-        <div
-          class="bg-light-surface dark:bg-dark-surface p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
-          [class.text-right]="i % 2 !== 0">
-          <p class="text-sm font-semibold text-light-primary dark:text-dark-primary">
-            {{ job.duration }}
-          </p>
-          <h3 class="text-xl font-bold mt-1">{{ job.title }}</h3>
-          <p class="text-md mb-4">{{ job.company }}</p>
-          <ul class="list-disc list-inside text-left space-y-1">
-            @for (point of job.points; track point) {
-            <li>{{ point }}</li>
+      <!-- Left Column (Image + Stats): Spans 2 cols on desktop -->
+      <div class="lg:col-span-2 flex flex-col justify-center items-center min-h-[350px] lg:min-h-[450px]">
+
+        <!-- Profile Image + Dot Animation Container -->
+        <div class="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0 flex items-center justify-center">
+
+          <!-- Animated dots -->
+          <div class="absolute inset-0">
+            @for (dot of animatedDots; track $index) {
+            <div class="dot"></div>
             }
-          </ul>
+          </div>
+
+
+          <!-- Profile Image -->
+          <img [ngSrc]="'images/lps_profile2-removebg.png'" [alt]="profile().name" width="320" height="320" priority
+            class="relative z-10 w-full h-full object-cover rounded-full shadow-2xl transition-all duration-500 ease-in-out hover:scale-105 group-hover:rotate-3" />
+        </div>
+
+
+        <!-- Stats Section: Arranged horizontally (flex-row) below image -->
+        <div class="flex flex-row flex-wrap justify-center gap-8 mt-12">
+
+          <!-- Stat: Years -->
+          <div #statYears data-stat-ref="statYears"
+            class="flex items-center justify-center gap-3 text-gray-900 dark:text-white">
+            <span class="text-4xl font-bold">
+              0.0 <!-- Initial value, will be animated -->
+            </span>
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-400 leading-tight">Years
+              of<br />Experience</span>
+          </div>
+
+
+          <!-- Stat: Professional Projects -->
+          <div #statProfProjects data-stat-ref="statProfProjects"
+            class="flex items-center justify-center gap-3 text-gray-900 dark:text-white">
+            <span class="text-4xl font-bold">
+              0 <!-- Initial value, will be animated -->
+            </span>
+            <span
+              class="text-sm font-medium text-gray-600 dark:text-gray-400 leading-tight">Professional<br />Projects</span>
+          </div>
+
+
+          <!-- Stat: Personal Projects -->
+          <div #statPersProjects data-stat-ref="statPersProjects"
+            class="flex items-center justify-center gap-3 text-gray-900 dark:text-white">
+            <span class="text-4xl font-bold">
+              0 <!-- Initial value, will be animated -->
+            </span>
+            <span
+              class="text-sm font-medium text-gray-600 dark:text-gray-400 leading-tight">Personal<br />Projects</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Right Column (About Card): Spans 3 cols on desktop -->
+      <div class="lg:col-span-3">
+
+        <!-- Glassmorphism Card -->
+        <div
+          class="relative z-10 p-8 md:p-12 rounded-3xl shadow-2xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-2xl border border-white/20">
+          <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            {{ profile().name }}
+          </h2>
+          <h3 class="text-xl md:text-2xl font-semibold text-light-primary dark:text-dark-primary mb-6">
+            {{ profile().headline }}
+          </h3>
+
+
+          <!-- About Me Paragraphs -->
+          @for (paragraph of aboutParagraphs(); track $index; let last = $last)
+          {
+          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed" [class.mb-4]="!last">
+            {{ paragraph }}
+          </p>
+          }
+
+          <!-- View More Button -->
+          <button (click)="openModal()"
+            class="px-8 py-3 mt-8 rounded-full text-lg font-semibold text-white bg-light-primary dark:bg-dark-primary dark:text-gray-900 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/50">
+            View More
+          </button>
         </div>
       </div>
     </div>
-    }
   </div>
 </section>
+
+<!-- Career Modal -->
+@if (isModalOpen()) {
+<div class="modal-container fixed inset-0 z-[100] flex items-center justify-center p-4">
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-md" (click)="closeModal()"></div>
+
+
+  <!-- Modal Panel -->
+  <div
+    class="modal-panel relative z-50 w-full max-w-5xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+
+    <!-- Modal Header (UPDATED) -->
+    <div class="flex justify-between items-center p-6 bg-light-primary-container dark:bg-dark-primary-container">
+      <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Professional Journey
+      </h3>
+      <button (click)="closeModal()"
+        class="w-10 h-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+
+    <!-- Modal Body -->
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 p-8 overflow-y-auto">
+
+      <!-- Left Column: Job List -->
+      <div class="md:col-span-1 h-full overflow-y-auto pr-4 space-y-2">
+        @for (job of workExperience(); track job.title; let i = $index) {
+        <button (click)="selectJob(i)" class="w-full text-left p-4 rounded-lg transition-all duration-300 ease-in-out"
+          [class.bg-light-primary-container]="selectedJobIndex() === i"
+          [class.dark:bg-dark-primary-container]="selectedJobIndex() === i"
+          [class.text-light-primary]="selectedJobIndex() === i"
+          [class.dark:text-dark-primary]="selectedJobIndex() === i" [class.shadow-md]="selectedJobIndex() === i"
+          [class.hover:bg-gray-100]="selectedJobIndex() !== i" [class.dark:hover:bg-gray-800]="selectedJobIndex() !== i"
+          [class.text-gray-700]="selectedJobIndex() !== i" [class.dark:text-gray-300]="selectedJobIndex() !== i">
+          <span class="block font-semibold">{{ job.title }}</span>
+          <span class="block text-sm opacity-80">{{ job.company }}</span>
+        </button>
+        }
+      </div>
+
+
+      <!-- Right Column: Card Stack -->
+      <div class="md:col-span-2 relative min-h-[450px] flex items-start justify-center" (wheel)="handleWheel($event)">
+        <div class="career-card-stack relative w-full max-w-md h-full">
+          @for (job of workExperience(); track job.title; let i = $index) {
+
+          <!-- Career Card -->
+          <div
+            class="card absolute w-full overflow-hidden bg-transparent rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out"
+            [style.transform]="getCardTransform(i)" [style.opacity]="getCardOpacity(i)"
+            [style.zIndex]="getCardZIndex(i)">
+
+            <!-- Card Header -->
+            <div class="p-6 bg-light-primary-container dark:bg-dark-primary-container">
+              <p class="text-sm font-semibold text-light-primary dark:text-dark-primary mb-1">
+                {{ job.duration }}
+              </p>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                {{ job.title }}
+              </h3>
+              <p class="text-md text-gray-700 dark:text-gray-300">
+                {{ job.company }}
+              </p>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 bg-white dark:bg-gray-800">
+              <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400">
+                @for (point of job.points; track point) {
+                <li>{{ point }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-right">
+      <button (click)="downloadCV()"
+        class="px-6 py-2 rounded-full text-md font-semibold text-white bg-light-primary dark:bg-dark-primary dark:text-gray-900 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/50">
+        Download CV
+      </button>
+    </div>
+  </div>
+</div>
+}
