@@ -1,7 +1,8 @@
-// about.scss
-
 :host {
   display: block;
+  background-color: var(--section-2-bg);
+  transition: background-color 0.3s ease;
+  position: relative;
 }
 
 /* --- Card Stack Physics --- */

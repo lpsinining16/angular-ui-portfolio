@@ -1,5 +1,3 @@
-// about.ts
-
 import { CommonModule, DOCUMENT, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import {
   afterNextRender,
