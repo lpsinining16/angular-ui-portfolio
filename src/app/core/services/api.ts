@@ -57,6 +57,13 @@ export interface Project {
   systems: System[];
 }
 
+export interface WorkExperience {
+  title: string;
+  company: string;
+  duration: string;
+  points: string[];
+  isDevRole: boolean;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -96,49 +103,64 @@ export class ApiService {
     profilePhoto: 'images/lps_profile.png',
   });
 
-  workExperience = signal([
+  workExperience = signal<WorkExperience[]>([
     {
       title: 'Custom Software Engineering Specialist',
       company: 'Accenture Inc.',
-      duration: 'Dec 2022 - Present',
+      duration: '2022-12-01 - Present',
       points: [
         'Developed and maintained web applications for casino systems using Angular and PrimeNG.',
         'Collaborated with cross-functional teams to deliver new features.',
         'Handled front-end tasks, version upgrades, and UX enhancements.',
         'Supported debugging and issue resolution for production environments.',
       ],
+      isDevRole: true,
     },
     {
       title: 'Advanced App Engineering Senior Analyst',
       company: 'Accenture Inc.',
-      duration: 'Apr 2021 - Nov 2022',
+      duration: '2021-04-21 - 2022-11-30',
       points: [
         'Built and maintained front-end modules using Angular and PrimeNG.',
         'Participated in the migration of Angular, PrimeNG, and Bootstrap versions.',
         'Conducted peer code reviews and contributed to knowledge-sharing sessions.',
         'Worked on UI automation testing using Selenium integrated with Spring Boot.',
       ],
+      isDevRole: true,
     },
     {
       title: 'Team Lead, Software Engineering',
       company: 'Intellicare - Asalus Corporation',
-      duration: 'Nov 2016 - Apr 2021',
+      duration: '2016-11-01 - 2021-04-20',
       points: [
         'Led a team in building internal applications using Angular and ASP.NET MVC (C#).',
         'Oversaw design of Angular Material-based front-end modules.',
         'Guided and mentored junior developers.',
         'Collaborated with business stakeholders to gather requirements.',
       ],
+      isDevRole: true,
+    },
+    {
+      title: 'Software Developer',
+      company: 'Intellicare - Asalus Corporation',
+      duration: '2016-03-01 - 2016-10-31',
+      points: [
+        'Developed and enhanced internal applications using Visual FoxPro.',
+        'Assisted in requirements gathering, coding, debugging, and deploying solutions.',
+        'Collaborated with business stakeholders to gather requirements.',
+      ],
+      isDevRole: true,
     },
     {
       title: 'Technical and Customer Support',
       company: 'Sky Cable Corporation',
-      duration: 'Aug 2014 - Dec 2015',
+      duration: '2014-08-01 - 2015-12-31',
       points: [
         'Provided technical support for Sky Broadband customers.',
         'Assisted in customer troubleshooting, achieving a high first-call resolution rate.',
         'Coordinated with technical teams for issue resolution.',
       ],
+      isDevRole: false,
     },
   ]);
 

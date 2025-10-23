@@ -1,201 +1,70 @@
+@use 'sass:math';
+
 :host {
   display: block;
-  background-color: var(--section-2-bg);
-  transition: background-color 0.3s ease;
+  // Fallback background if loaded separately, though controlled by Tailwind classes in HTML now
+  --section-bg: var(--section-2-bg, #f3f4f6);
 }
 
-@keyframes appleMusicDots {
-  0%,
-  100% {
-    transform: scale(0.5) translate(0, 0);
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.1) translate(var(--x-translate, 20px), var(--y-translate, -30px));
-    opacity: 1;
-  }
-  75% {
-    opacity: 0.7;
-  }
-}
-
+/* --- Animated Background Dots --- */
 .dot {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 12px;
-  height: 12px;
   border-radius: 50%;
-  background-color: var(--primary-container);
-  opacity: 0;
-  animation: appleMusicDots 10s infinite ease-in-out;
-  box-shadow: 0 0 15px var(--primary-container);
+  background-color: var(--primary-container-soft, rgba(100, 100, 255, 0.2));
+  // Simple subtle shadow for depth
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+  animation: float-bubble 20s infinite ease-in-out alternate;
+}
 
-  /* This is the magic: Assign random properties to each dot.
-    We use --x-translate and --y-translate CSS variables to give each dot a unique path.
-  */
-
-  &:nth-child(1) {
-    --x-translate: 80px;
-    --y-translate: -120px;
-    width: 8px;
-    height: 8px;
-    animation-delay: 0s;
-    animation-duration: 8s;
-  }
-  &:nth-child(2) {
-    --x-translate: -100px;
-    --y-translate: 100px;
-    animation-delay: -1s;
-    animation-duration: 12s;
-  }
-  &:nth-child(3) {
-    --x-translate: 120px;
-    --y-translate: 50px;
-    width: 10px;
-    height: 10px;
-    animation-delay: -2s;
-    animation-duration: 9s;
-    background-color: var(--primary-container-soft);
-  }
-  &:nth-child(4) {
-    --x-translate: -130px;
-    --y-translate: -80px;
-    animation-delay: -3s;
-    animation-duration: 11s;
-  }
-  &:nth-child(5) {
-    --x-translate: 50px;
-    --y-translate: 140px;
-    width: 14px;
-    height: 14px;
-    animation-delay: -4s;
-    animation-duration: 7s;
-  }
-  &:nth-child(6) {
-    --x-translate: -60px;
-    --y-translate: 110px;
-    animation-delay: -5s;
-    animation-duration: 10s;
-    background-color: var(--primary-container-soft);
-  }
-  &:nth-child(7) {
-    --x-translate: 110px;
-    --y-translate: -70px;
-    width: 8px;
-    height: 8px;
-    animation-delay: -6s;
-    animation-duration: 13s;
-  }
-  &:nth-child(8) {
-    --x-translate: -140px;
-    --y-translate: 30px;
-    animation-delay: -7s;
-    animation-duration: 8s;
-  }
-  &:nth-child(9) {
-    --x-translate: 90px;
-    --y-translate: 90px;
-    width: 10px;
-    height: 10px;
-    animation-delay: -8s;
-    animation-duration: 11s;
-    background-color: var(--primary-container-soft);
-  }
-  &:nth-child(10) {
-    --x-translate: -80px;
-    --y-translate: -130px;
-    animation-delay: -9s;
-    animation-duration: 9s;
-  }
-  &:nth-child(11) {
-    --x-translate: 130px;
-    --y-translate: -100px;
-    width: 12px;
-    height: 12px;
-    animation-delay: -10s;
-    animation-duration: 10s;
-  }
-  &:nth-child(12) {
-    --x-translate: -110px;
-    --y-translate: 130px;
-    animation-delay: -11s;
-    animation-duration: 12s;
-  }
-  &:nth-child(13) {
-    --x-translate: 70px;
-    --y-translate: -50px;
-    width: 8px;
-    height: 8px;
-    animation-delay: -4.5s;
-    animation-duration: 8s;
-  }
-  &:nth-child(14) {
-    --x-translate: -50px;
-    --y-translate: 70px;
-    animation-delay: -2.5s;
-    animation-duration: 11s;
-  }
-  &:nth-child(15) {
-    --x-translate: 100px;
-    --y-translate: 140px;
-    width: 10px;
-    height: 10px;
-    animation-delay: -7.5s;
-    animation-duration: 9s;
-    background-color: var(--primary-container-soft);
+@for $i from 1 through 20 {
+  .dot:nth-child(#{$i}) {
+    $size: math.random(15) + 5 + px;
+    width: $size;
+    height: $size;
+    // Random positions using percentage for responsiveness
+    left: math.random(100) * 1%;
+    top: math.random(100) * 1%;
+    // Randomize animation timings for natural feel
+    animation-duration: (math.random(10) + 15) + s;
+    animation-delay: (math.random(5) * -1) + s;
+    opacity: (math.random(5) + 2) * 0.1; // 0.2 to 0.7 opacity
   }
 }
 
-/* Modal Animation
-  - Defines the fade-in and slide-up effect for the modal components.
-*/
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
+@keyframes float-bubble {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* --- Card Stack Physics --- */
+// 3D perspective container
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.card {
+  // Critical for performant smooth animations
+  will-change: transform, opacity;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); // "Out-Expo" feel
+  transform-origin: 50% 0%; // Stack from top center
+  backface-visibility: hidden; // Smoother rendering during 3D transforms
+}
+
+/* --- Utility --- */
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
   }
-  to {
-    opacity: 1;
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
-}
-
-@keyframes modalSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-container {
-  animation: modalFadeIn 0.3s ease-out;
-}
-
-.modal-backdrop {
-  animation: modalFadeIn 0.3s ease-out;
-}
-
-.modal-panel {
-  animation: modalSlideUp 0.4s ease-out;
-}
-
-/* Career Card Stack
-  - Ensures the cards stack correctly and are ready for transform animations.
-*/
-.career-card-stack {
-  perspective: 1000px; /* Adds depth for potential 3D effects */
-
-  .card {
-    /* This is crucial for the smooth animation.
-      We transition transform, opacity, and z-index.
-    */
-    transform-origin: center bottom;
-    will-change: transform, opacity;
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
   }
 }

@@ -2,7 +2,6 @@ import { Injectable, signal, PLATFORM_ID, Inject, WritableSignal } from '@angula
 import { isPlatformBrowser } from '@angular/common';
 
 export type SoundType =
-  | 'appear'
   | 'click'
   | 'clickClose'
   | 'clickError'
@@ -11,6 +10,7 @@ export type SoundType =
   | 'clickSounds'
   | 'hoverBubbles'
   | 'hoverBubbles2'
+  | 'clickSpecial'
   | 'clickThemeSwitcher';
 
 @Injectable({
@@ -52,7 +52,6 @@ export class SoundService {
 
   private preloadSounds(): void {
     const sounds: Record<SoundType, string> = {
-      appear: '/sounds/appear.wav',
       click: '/sounds/click.wav',
       clickClose: '/sounds/click-close.wav',
       clickError: '/sounds/click-error.wav',
@@ -61,6 +60,7 @@ export class SoundService {
       clickSounds: '/sounds/click-sounds.wav',
       hoverBubbles: '/sounds/hover-bubbles.wav',
       hoverBubbles2: '/sounds/hover-bubbles2.wav',
+      clickSpecial: '/sounds/click-special.mp3',
       clickThemeSwitcher: '/sounds/click-theme-switcher.wav',
     };
 

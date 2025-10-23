@@ -1,274 +1,218 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  QueryList,
-  ViewChildren,
   computed,
-  effect,
+  ElementRef,
   inject,
+  PLATFORM_ID,
+  QueryList,
   signal,
+  ViewChildren,
 } from '@angular/core';
-import { ApiService } from '../../core/services/api';
+import { ApiService, WorkExperience } from '../../core/services/api';
+import { SoundService } from '../../core/services/sound';
 
 @Component({
   selector: 'app-about',
+  standalone: true,
   imports: [CommonModule, NgOptimizedImage],
   templateUrl: './about.html',
   styleUrl: './about.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(window:scroll)': 'onWindowScroll()',
+    '(document:keydown.escape)': 'onEscapeKey()',
+  },
 })
 export class About {
-  apiService = inject(ApiService);
-  workExperience = this.apiService.workExperience;
-  profile = this.apiService.profile;
+  private readonly api = inject(ApiService);
+  private readonly sound = inject(SoundService);
+  private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
+  // --- Signals for State ---
+  profile = this.api.profile;
+  workExperience = this.api.workExperience;
   isModalOpen = signal(false);
   selectedJobIndex = signal(0);
+  scrollProgress = signal(0);
 
-  aboutParagraphs = computed(() => {
-    return this.profile().about.split('\n\n'); // Split by double newline
-  });
+  // --- Computed Derived State ---
+  aboutParagraphs = computed(() => this.profile().about.split('\n\n'));
 
-  // --- Statistics Calculation ---
-
-  /**
-   * Calculates years of experience from a specific start date.
-   * Finds the 'Intellicare' job and uses its start date.
-   */
   currentJobYears = computed(() => {
-    const jobs = this.workExperience();
-    // Find the Intellicare job to get the "Nov 2016" start date
-    const intellicareJob = jobs.find((job) => job.company.includes('Intellicare'));
+    const devJobs = this.workExperience().filter((job) => job.isDevRole);
+    if (devJobs.length === 0) return 0;
+    // Assuming the last item in the filtered list is the oldest
+    const firstDevJob = devJobs[devJobs.length - 1];
+    const startDate = new Date(firstDevJob.duration.split(' - ')[0]);
+    if (isNaN(startDate.getTime())) return 0;
 
-    if (!intellicareJob) {
-      // Fallback or default
-      const presentJob = jobs.find((job) => job.duration.includes('Present'));
-      if (!presentJob) return 0;
-      const startDate = new Date(presentJob.duration.split(' - ')[0]);
-      const now = new Date();
-      return (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-    }
-
-    // Parse "Nov 2016"
-    const [startMonthStr, startYearStr] = intellicareJob.duration.split(' - ')[0].split(' ');
-    const monthIndex = new Date(Date.parse(startMonthStr + ' 1, 2000')).getMonth();
-    const startDate = new Date(parseInt(startYearStr), monthIndex, 1);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - startDate.getTime());
+    const diffTime = Math.abs(new Date().getTime() - startDate.getTime());
     return diffTime / (1000 * 60 * 60 * 24 * 365.25);
   });
 
-  /**
-   * Counts all "systems" within "professional" projects.
-   */
-  professionalProjectsCount = computed(() => {
-    return this.apiService
+  professionalProjectsCount = computed(() =>
+    this.api
       .projects()
       .filter((p) => p.type === 'professional')
-      .reduce((acc, curr) => acc + curr.systems.length, 0);
-  });
+      .reduce((acc, curr) => acc + curr.systems.length, 0)
+  );
 
-  /**
-   * Counts all "systems" within "personal" projects.
-   */
-  personalProjectsCount = computed(() => {
-    return this.apiService
+  personalProjectsCount = computed(() =>
+    this.api
       .projects()
       .filter((p) => p.type === 'personal')
-      .reduce((acc, curr) => acc + curr.systems.length, 0);
-  });
+      .reduce((acc, curr) => acc + curr.systems.length, 0)
+  );
 
-  // --- Statistics Animation ---
-  @ViewChildren('statYears, statProfProjects, statPersProjects')
-  statElements!: QueryList<ElementRef>;
-
+  // --- UI Elements ---
+  animatedDots = new Array(20); // Fixed size for template loop
+  @ViewChildren('statRef') statElements!: QueryList<ElementRef<HTMLElement>>;
   private observer?: IntersectionObserver;
 
   constructor() {
-    // Effect to observe elements when they are available
-    effect(() => {
-      if (this.statElements && this.statElements.length) {
-        this.initIntersectionObserver();
-      }
+    // safely initialize browser-only features after first render
+    afterNextRender(() => {
+      this.initIntersectionObserver();
+      // Initial scroll progress calculation
+      this.onWindowScroll();
     });
   }
 
-  private initIntersectionObserver() {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.5, // Trigger when 50% visible
+  // --- Event Handlers (Host) ---
+  onWindowScroll(): void {
+    if (!this.isBrowser) return;
+    const winScroll = this.document.body.scrollTop || this.document.documentElement.scrollTop;
+    const height =
+      this.document.documentElement.scrollHeight - this.document.documentElement.clientHeight;
+    if (height > 0) {
+      this.scrollProgress.set((winScroll / height) * 100);
+    }
+  }
+
+  onEscapeKey(): void {
+    if (this.isModalOpen()) {
+      this.closeModal();
+    }
+  }
+
+  // --- Modal & Navigation ---
+  openModal(): void {
+    this.isModalOpen.set(true);
+    if (this.isBrowser) this.document.body.style.overflow = 'hidden';
+    this.sound.playSound('clickHover');
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    if (this.isBrowser) this.document.body.style.overflow = '';
+    this.selectedJobIndex.set(0); // Reset stack on close
+  }
+
+  selectJob(index: number): void {
+    if (this.selectedJobIndex() !== index) {
+      this.sound.playSound('clickHover');
+      this.selectedJobIndex.set(index);
+    }
+  }
+
+  downloadCV(): void {
+    if (this.isBrowser) {
+      window.open(this.profile().cvUrl, '_blank');
+    }
+  }
+
+  // --- Card Stack Logic ---
+  private lastWheelTime = 0;
+
+  handleWheel(event: WheelEvent): void {
+    event.preventDefault();
+    const now = Date.now();
+    if (now - this.lastWheelTime < 300) return; // Throttled to 300ms
+    this.lastWheelTime = now;
+
+    const current = this.selectedJobIndex();
+    const total = this.workExperience().length;
+
+    // Circular Navigation
+    if (event.deltaY < 0) {
+      // Scroll Up: go previous or wrap to last
+      this.selectJob(current > 0 ? current - 1 : total - 1);
+    } else {
+      // Scroll Down: go next or wrap to first
+      this.selectJob(current < total - 1 ? current + 1 : 0);
+    }
+  }
+
+  getCardStyles(index: number): Record<string, string> {
+    const total = this.workExperience().length;
+    const selected = this.selectedJobIndex();
+    // Calculate relative position in the circular stack (0 is active)
+    const relIndex = (index - selected + total) % total;
+
+    // Performance optimization: hide cards deep in stack
+    if (relIndex > 3) return { opacity: '0', pointerEvents: 'none', visibility: 'hidden' };
+
+    const translateY = relIndex * 24; // 24px vertical stack spacing
+    const scale = 1 - relIndex * 0.04; // Slight scale down for depth
+    const opacity = relIndex === 0 ? 1 : Math.max(0.4, 1 - relIndex * 0.3); // Fade out background cards
+    const zIndex = total - relIndex;
+
+    return {
+      transform: `translate3d(0, ${translateY}px, -${relIndex}px) scale(${scale})`,
+      opacity: opacity.toString(),
+      zIndex: zIndex.toString(),
     };
-
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          const statRef = el.dataset['statRef'];
-          let targetValue: number;
-
-          // Determine target value based on the element
-          if (statRef === 'statYears') {
-            targetValue = this.currentJobYears();
-          } else if (statRef === 'statProfProjects') {
-            targetValue = this.professionalProjectsCount();
-          } else if (statRef === 'statPersProjects') {
-            targetValue = this.personalProjectsCount();
-          } else {
-            return;
-          }
-
-          this.animateStat(el.querySelector('span')!, targetValue);
-          this.observer?.unobserve(el); // Animate only once
-        }
-      });
-    }, options);
-
-    this.statElements.forEach((el) => {
-      this.observer?.observe(el.nativeElement);
-    });
   }
 
-  private animateStat(el: HTMLElement, target: number) {
-    const duration = 1500; // 1.5 seconds
-    const start = 0;
-    const isFloat = !Number.isInteger(target);
-    let startTime: number | null = null;
+  // --- Stats Animation ---
+  private initIntersectionObserver(): void {
+    if (!('IntersectionObserver' in window)) return;
 
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const currentVal = start + progress * (target - start);
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            this.animateStat(el);
+            this.observer?.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
 
-      if (isFloat) {
-        el.innerText = currentVal.toFixed(1);
-      } else {
-        el.innerText = Math.floor(currentVal).toString();
-      }
+    this.statElements.forEach((el) => this.observer?.observe(el.nativeElement));
+  }
+
+  private animateStat(el: HTMLElement): void {
+    const targetStr = el.dataset['target'];
+    if (!targetStr) return;
+
+    const target = parseFloat(targetStr);
+    const isFloat = targetStr.includes('.');
+    const duration = 2000;
+    const startTime = performance.now();
+
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Easing function for smoother finish (easeOutQuart)
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+      const currentVal = easedProgress * target;
+      el.innerText = isFloat ? currentVal.toFixed(1) : Math.floor(currentVal).toString();
 
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
-        if (isFloat) {
-          el.innerText = target.toFixed(1);
-        } else {
-          el.innerText = target.toString();
-        }
+        el.innerText = isFloat ? target.toFixed(1) : target.toString();
       }
     };
-
     requestAnimationFrame(step);
-  }
-
-  // --- Animated Dots ---
-  // Simple array to loop over for creating dots
-  animatedDots = new Array(20);
-
-  // --- Modal Methods ---
-  openModal() {
-    this.isModalOpen.set(true);
-    // Lock body scroll
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeModal() {
-    this.isModalOpen.set(false);
-    // Unlock body scroll
-    document.body.style.overflow = '';
-    // Reset to default job on close
-    this.selectedJobIndex.set(0);
-  }
-
-  selectJob(index: number) {
-    this.selectedJobIndex.set(index);
-  }
-
-  downloadCV() {
-    window.open(this.apiService.profile().cvUrl, '_blank');
-  }
-
-  // --- UPDATED HELPER for Circular Card Logic ---
-  /**
-   * Calculates the relative index for circular stacking.
-   * Maps "dismissed" cards (negative index) to the back of the stack.
-   */
-  private getCircularRelativeIndex(index: number): number {
-    const totalCards = this.workExperience().length;
-    if (totalCards === 0) return 0; // Avoid errors if array is empty
-
-    const selected = this.selectedJobIndex();
-
-    // Calculate relative index: (index - selected + totalCards) % totalCards
-    // This gives a result from 0 (active) to totalCards - 1 (last card in stack)
-    return (index - selected + totalCards) % totalCards;
-  }
-
-  // --- UPDATED Card Stack Transform Logic ---
-  getCardTransform(index: number): string {
-    // Uses the new circular logic
-    const relativeIndex = this.getCircularRelativeIndex(index);
-
-    // Active card (relativeIndex = 0)
-    if (relativeIndex === 0) {
-      return 'translateY(0) scale(1)';
-    }
-
-    // Cards stacked behind (or wrapped around)
-    const scale = 1 - relativeIndex * 0.05; // Diminish scale for cards further back
-    const translateY = relativeIndex * 20; // Stack them downwards
-    return `translateY(${translateY}px) scale(${scale})`;
-  }
-
-  // --- UPDATED Card Opacity Logic ---
-  getCardOpacity(index: number): string {
-    // All cards in the circular stack are visible, unless we add a limit
-    const relativeIndex = this.getCircularRelativeIndex(index);
-
-    // Optionally hide cards that are too deep in the stack
-    if (relativeIndex > 3) {
-      // Hides cards after the 3rd one in the stack
-      return '0';
-    }
-    return '1'; // All other cards are visible
-  }
-
-  getCardZIndex(index: number): string {
-    const totalCards = this.workExperience().length;
-    const relativeIndex = this.getCircularRelativeIndex(index);
-    return (totalCards - relativeIndex).toString();
-  }
-
-  // --- NEW: Scroll-driven card navigation ---
-  private lastWheelTime = 0;
-  private readonly wheelThrottleTime = 350; // ms
-
-  /**
-   * Handles the mouse wheel event on the card stack for navigation.
-   * This provides the Apple Wallet-style scroll-through effect.
-   * Includes throttling to prevent overly rapid scrolling.
-   */
-  handleWheel(event: WheelEvent): void {
-    event.preventDefault(); // Prevent the modal content from scrolling
-
-    const now = Date.now();
-    if (now - this.lastWheelTime < this.wheelThrottleTime) {
-      return;
-    }
-    this.lastWheelTime = now;
-
-    const currentIndex = this.selectedJobIndex();
-    const maxIndex = this.workExperience().length - 1;
-
-    if (event.deltaY < 0) {
-      // Wheel up: Go to previous job, or wrap to end
-      const nextIndex = currentIndex > 0 ? currentIndex - 1 : maxIndex;
-      this.selectJob(nextIndex);
-    } else {
-      // Wheel down: Go to next job, or wrap to start
-      const nextIndex = currentIndex < maxIndex ? currentIndex + 1 : 0;
-      this.selectJob(nextIndex);
-    }
   }
 }
