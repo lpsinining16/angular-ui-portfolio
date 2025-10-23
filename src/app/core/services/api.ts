@@ -11,6 +11,8 @@ export interface Profile {
   headline: string;
   summary: string;
   about: string;
+  about2: string;
+  about3: string;
   email: string;
   phone: string;
   location: string;
@@ -85,14 +87,12 @@ export class ApiService {
     about: `I am a passionate and dedicated software engineer with a strong background in front-end
       development, particularly with Angular. With over 9 years in the industry, I've had the opportunity to
       work on a diverse range of projects, from modernizing legacy desktop applications to building
-      enterprise-grade web systems for global clients.
-      
-      My journey in tech began with a curiosity for how things work, which led me to a degree in
+      enterprise-grade web systems for global clients.`,
+    about2:`My journey in tech began with a curiosity for how things work, which led me to a degree in
       Computer Engineering. I thrive in collaborative environments, leveraging Agile methodologies to
       deliver efficient, scalable, and user-friendly solutions. I'm always eager to learn and adapt to new
-      technologies to continuously improve my craft and contribute effectively to my team.
-      
-      When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects, and
+      technologies to continuously improve my craft and contribute effectively to my team.`,
+    about3:`When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects, and
       spending time with my family.`,
     email: 'larry.sinining@gmail.com',
     phone: '+639936081692',
