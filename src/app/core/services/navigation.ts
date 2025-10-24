@@ -1,126 +1,72 @@
-// src/app/core/services/navigation.ts
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID, NgZone } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { ViewportScroller } from '@angular/common';
+import { ViewportScroller, isPlatformBrowser } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { SoundService } from './sound';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class NavigationService {
+  // --- INJECTIONS ---
   private readonly soundService = inject(SoundService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly viewportScroller = inject(ViewportScroller);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly ngZone = inject(NgZone); // For running browser APIs outside Angular's zone
 
-  activeFragment = signal<string | null>(null);
-  public isNavigatingAndScrolling = signal(false);
-
-  private readonly defaultScrollOffset = 80;
-  private isManualNavigationInProgress = false;
-  private navigationDebounceTimeout: any;
+  // --- SIGNALS ---
+  readonly activeFragment = signal<string | null>(null);
 
   constructor() {
+    // This subscription now ONLY handles EXTERNAL navigation events like back/forward or initial load.
     this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.handleRouteChange());
-
-    // Ensure offset for non-home scrolling
-    this.viewportScroller.setOffset([0, this.defaultScrollOffset]);
-    this.viewportScroller.setHistoryScrollRestoration('manual');
-  }
-
-  /** 🔊 Play navigation click sound */
-  playNavigationSound(): void {
-    this.soundService.playSound('click');
-  }
-
-  /** 🚀 Handle route changes and scroll if needed */
-  private handleRouteChange(): void {
-    let currentRoute = this.activatedRoute;
-    while (currentRoute.firstChild) {
-      currentRoute = currentRoute.firstChild;
-    }
-
-    currentRoute.fragment.subscribe((fragment) => {
-      const targetFragment = fragment || 'home';
-
-      if (this.activeFragment() !== targetFragment) {
-        this.activeFragment.set(targetFragment);
-
-        // Smooth scroll only on first load or direct URL access (not manual clicks)
-        if (!this.isManualNavigationInProgress) {
-          this.isNavigatingAndScrolling.set(true);
-
-          setTimeout(() => {
-            if (targetFragment === 'home' && window.scrollY <= 0) {
-              // Already at top → no scroll needed
-              this.isNavigatingAndScrolling.set(false);
-            } else {
-              this.scrollToFragment(targetFragment, { behavior: 'smooth' });
-            }
-          }, 50);
-        }
-      }
-    });
-  }
-
-  /** 🧭 Navigate to a fragment with smooth scroll */
-  navigateToFragment(fragment: string): void {
-    this.playNavigationSound();
-
-    this.isManualNavigationInProgress = true;
-    this.isNavigatingAndScrolling.set(true);
-    clearTimeout(this.navigationDebounceTimeout);
-
-    // Reset after delay
-    this.navigationDebounceTimeout = setTimeout(() => {
-      this.isManualNavigationInProgress = false;
-      this.isNavigatingAndScrolling.set(false);
-    }, 800);
-
-    this.router.navigate(['/'], { fragment, replaceUrl: true }).then(() => {
-      this.activeFragment.set(fragment);
-      this.scrollToFragment(fragment, { behavior: 'smooth' });
-    });
-  }
-
-  /** 🎯 Scroll to element by ID, respecting header offset */
-  scrollToFragment(fragmentId: string, options?: ScrollIntoViewOptions): void {
-    const element = document.getElementById(fragmentId);
-    if (!element) {
-      console.warn(`Element with ID '${fragmentId}' not found for scrolling.`);
-      this.isNavigatingAndScrolling.set(false);
-      return;
-    }
-
-    const headerOffset = fragmentId === 'home' ? 0 : this.defaultScrollOffset;
-    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-    const offsetPosition = elementPosition - headerOffset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: options?.behavior || 'smooth',
-    });
-
-    if (!this.isManualNavigationInProgress) {
-      setTimeout(() => this.isNavigatingAndScrolling.set(false), 800);
-    }
-  }
-
-  /** 🔄 Update fragment in URL without scrolling (for IntersectionObserver) */
-  setActiveFragmentOnScroll(fragment: string): void {
-    if (!this.isManualNavigationInProgress && !this.isNavigatingAndScrolling()) {
-      if (this.activeFragment() !== fragment) {
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => {
+        const fragment = this.activatedRoute.snapshot.fragment || 'home';
         this.activeFragment.set(fragment);
-        this.router.navigate([], {
-          fragment,
-          relativeTo: this.activatedRoute,
-          replaceUrl: true,
-          queryParamsHandling: 'preserve',
+        this.scrollToFragment(fragment, false); // Instant scroll for browser actions
+      });
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.viewportScroller.setOffset([0, 80]); // Header offset
+      this.viewportScroller.setHistoryScrollRestoration('manual');
+    }
+  }
+
+  public navigateToFragment(fragment: string): void {
+    this.soundService.playSound('click');
+    // We navigate with the router, which will be handled by the constructor's subscription.
+    this.router.navigate(['/'], { fragment });
+  }
+
+  public setActiveFragmentOnScroll(fragment: string): void {
+    // Only proceed if the fragment has actually changed, to avoid unnecessary history updates.
+    if (this.activeFragment() !== fragment) {
+      // 1. Update the UI state immediately.
+      this.activeFragment.set(fragment);
+
+      // 2. Use the browser's native history API to SILENTLY update the URL.
+      if (isPlatformBrowser(this.platformId)) {
+        // Run this outside of Angular's zone to prevent any potential change detection cycles.
+        this.ngZone.runOutsideAngular(() => {
+          const newUrl = `${window.location.pathname}#${fragment}`;
+          history.replaceState(null, '', newUrl);
         });
       }
+    }
+  }
+
+  /**
+   * A private utility for scrolling to a section.
+   */
+  private scrollToFragment(fragmentId: string, smooth: boolean): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const behavior = smooth ? 'smooth' : 'auto';
+
+    if (fragmentId === 'home') {
+      window.scrollTo({ top: 0, behavior });
+    } else {
+      this.viewportScroller.scrollToAnchor(fragmentId);
     }
   }
 }

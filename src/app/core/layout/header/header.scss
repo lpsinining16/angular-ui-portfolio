@@ -2,11 +2,28 @@
   display: block;
 }
 
-// Base header styles
+// --- Scroll Progress Bar ---
+.scroll-progress-bar-track {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--progress-bar-track);
+  z-index: 51;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  width: 100%;
+  background-color: var(--progress-bar-bg);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+// --- Header Styles ---
 header#app-bar {
-  // NOTE: The 'fixed' positioning is handled by a class in the HTML template.
-  // Removing 'position: relative' from here fixes the sticky behavior.
-  z-index: 50;
+  z-index: 40;
   padding: 1.25rem 1rem;
   transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -20,20 +37,16 @@ header#app-bar {
   max-width: 1280px;
   padding: 0 2rem;
   border-radius: 9999px;
-  transition: background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-// Shrunk state for the header bar
-header#app-bar.shrunk {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-
-  .nav-wrapper {
-    @apply bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-md;
-    padding: 1rem 2rem; // Adjusted padding for shrunk mode
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
+header#app-bar.shrunk .nav-wrapper {
+  background-color: rgba(var(--surface-rgb), 0.8);
+  @apply backdrop-blur-md;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .logo {
@@ -42,7 +55,7 @@ header#app-bar.shrunk {
   color: var(--primary);
   text-decoration: none;
   transition: font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   header#app-bar.shrunk & {
     font-size: 1.25rem;
   }
@@ -51,19 +64,27 @@ header#app-bar.shrunk {
 // --- Desktop Navigation & Controls ---
 .desktop-menu {
   @apply hidden md:flex items-center gap-2;
-  overflow: visible !important;
 }
 
+/* --- THIS IS THE UPDATED SECTION --- */
 .menu-link {
   padding: 0.5rem 1rem;
   border-radius: 9999px;
-  font-weight: 500;
+  font-weight: 500; /* Base font-weight */
   color: var(--text-color);
-  transition: color 0.3s, background-color 0.3s;
-  
-  &:hover, &[aria-current="page"] {
+  transition: color 0.3s, background-color 0.3s, font-weight 0.3s; /* Added font-weight to transition */
+
+  /* Style for when a user HOVERS over a link */
+  &:hover {
     color: var(--primary);
     background-color: var(--primary-container);
+  }
+
+  /* NEW: Distinct, stronger style for the CURRENTLY ACTIVE link */
+  &[aria-current='page'] {
+    color: var(--primary);
+    background-color: var(--primary-container-hover); /* Use the darker hover shade */
+    font-weight: 700; /* Make the text bold */
   }
 }
 
@@ -74,10 +95,52 @@ header#app-bar.shrunk {
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  
+
+  /* --- KEY CHANGES FOR THE NEW EFFECT --- */
+  position: relative; /* Essential for positioning the halo */
+  z-index: 1; /* Ensures button text is above the effect */
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- The Halo Pseudo-Element --- */
+  /* This creates a circular element that sits behind the button */
+  &::before {
+    content: '';
+    position: absolute;
+    /* Center it perfectly behind the button */
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 9999px;
+
+    /* The halo's appearance: a semi-transparent outline */
+    border: 2px solid var(--primary-container);
+
+    /* Start hidden: scaled down and invisible */
+    transform: scale(0.8);
+    opacity: 0;
+
+    /* Place it behind the button's content */
+    z-index: -1;
+
+    /* This will be animated when the active state is applied */
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  /* --- NEW ACTIVE STATE --- */
+  /* This rule activates the animation */
+  &[aria-current='page'] {
+    /* Better text contrast in dark mode */
+    @apply dark:text-white;
+
+    /* Trigger the animation on the ::before pseudo-element */
+    &::before {
+      animation: halo-ripple 1.5s infinite linear;
+    }
   }
 }
 
@@ -124,7 +187,8 @@ header#app-bar.shrunk {
 }
 
 header#app-bar.shrunk .mobile-menu-panel {
-  @apply bg-light-surface/95 dark:bg-dark-surface/95 backdrop-blur-md;
+  background-color: rgba(var(--surface-rgb), 0.95);
+  @apply backdrop-blur-md;
   width: calc(100% - 2rem);
   left: 50%;
   transform: translateX(-50%);
@@ -138,11 +202,18 @@ header#app-bar.shrunk .mobile-menu-panel {
 
   a {
     @apply block py-3 px-4 rounded-lg text-lg;
-    transition: background-color 0.2s, color 0.2s;
-    
-    &:hover, &[aria-current="page"] {
+    transition: background-color 0.2s, color 0.2s, font-weight 0.2s;
+    font-weight: 500;
+
+    &:hover {
       background-color: var(--primary-container);
       color: var(--primary);
+    }
+
+    &[aria-current='page'] {
+      background-color: var(--primary-container-hover);
+      color: var(--primary);
+      font-weight: 700;
     }
   }
 }
@@ -156,10 +227,9 @@ header#app-bar.shrunk .mobile-menu-panel {
   @apply flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0;
   background-color: var(--primary-container);
   color: var(--primary);
-  
+
   .icon {
     @apply w-6 h-6 fill-none stroke-current;
     stroke-width: 2;
   }
 }
-

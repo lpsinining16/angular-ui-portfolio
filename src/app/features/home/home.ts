@@ -22,12 +22,12 @@ export class Home {
 
   onReadAboutMeClick(): void {
     this.soundService.playSound('click');
-    this.navigationService.scrollToFragment('about');
+    this.navigationService.navigateToFragment('about');
   }
 
   onViewProjectsClick(): void {
     this.soundService.playSound('click');
-    this.navigationService.scrollToFragment('projects');
+    this.navigationService.navigateToFragment('projects');
   }
 
   playBubbleHoverSound(soundName: 'hoverBubbles' | 'hoverBubbles2'): void {

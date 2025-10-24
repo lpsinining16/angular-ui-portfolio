@@ -1,50 +1,57 @@
-<header id="app-bar" role="banner" [class.shrunk]="isShrunk()" class="fixed top-0 left-0 w-full z-50">
+<!-- Scroll Progress Bar: Animates based on scroll position -->
+<div class="scroll-progress-bar-track" aria-hidden="true">
+  <div class="scroll-progress-bar" [style.transform]="'scaleX(' + scrollProgress() + ')'">
+  </div>
+</div>
+
+<!-- Main Header Element -->
+<header id="app-bar" role="banner" [class.shrunk]="isShrunk()" class="fixed top-0 left-0 w-full z-40">
   <div class="nav-wrapper">
-    <!-- Logo -->
+    <!-- Logo (Acts as the 'Home' link) -->
     <a routerLink="/" fragment="home" (click)="onNavLinkClick('home')" class="logo" aria-label="Homepage">
       larscript.io
     </a>
 
-    <!-- Desktop Navigation -->
+    <!-- Desktop Navigation & Controls -->
     <nav class="desktop-menu" aria-label="Main Navigation">
+      <!-- Dynamic Navigation Links -->
       @for (link of navLinks(); track link.fragment) {
-        <a 
-          [routerLink]="'/'" 
-          [fragment]="link.fragment" 
-          (click)="onNavLinkClick(link.fragment)"
-          [class.menu-link]="!link.isContact"
-          [class.contact-btn]="link.isContact"
-          [attr.aria-current]="navigationService.activeFragment() === link.fragment ? 'page' : null">
-          {{ link.label }}
-        </a>
+      <a [routerLink]="'/'" [fragment]="link.fragment" (click)="onNavLinkClick(link.fragment)"
+        [class.menu-link]="!link.isContact" [class.contact-btn]="link.isContact"
+        [attr.aria-current]="navigationService.activeFragment() === link.fragment ? 'page' : null">
+        {{ link.label }}
+      </a>
       }
 
+      <!-- Visual Separator -->
       <div class="separator" aria-hidden="true"></div>
 
-      <!-- Desktop Controls -->
-      <button 
-        type="button" 
-        (click)="toggleTheme()" 
-        class="control-btn" 
+      <!-- Theme Toggle Button -->
+      <button type="button" (click)="toggleTheme()" class="control-btn"
         [attr.aria-label]="'Switch to ' + (themeService.theme() === 'light' ? 'dark' : 'light') + ' theme'">
         @switch (themeService.theme()) {
-          @case ('light') {
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-          }
-          @case ('dark') {
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          }
+        @case ('light') {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+        }
+        @case ('dark') {
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+          </path>
+        </svg>
+        }
         }
       </button>
+
+      <!-- Volume Control Component -->
       <app-volume-control [isShrunk]="isShrunk()"></app-volume-control>
     </nav>
 
     <!-- Mobile Menu Toggle Button -->
-    <button 
-      type="button" 
-      (click)="toggleMenu()" 
-      class="mobile-toggle-btn" 
-      aria-label="Toggle navigation menu"
+    <button type="button" (click)="toggleMenu()" class="mobile-toggle-btn" aria-label="Toggle navigation menu"
       [attr.aria-expanded]="isMenuOpen()">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
@@ -52,38 +59,41 @@
     </button>
   </div>
 
-  <!-- Mobile Menu Panel -->
+  <!-- Mobile Menu Panel (Appears when isMenuOpen() is true) -->
   @if (isMenuOpen()) {
-    <div class="mobile-menu-panel">
-      <nav class="mobile-menu-nav" aria-label="Main Navigation">
-        @for (link of navLinks(); track link.fragment) {
-          <a 
-            [routerLink]="'/'" 
-            [fragment]="link.fragment" 
-            (click)="onNavLinkClick(link.fragment)"
-            [attr.aria-current]="navigationService.activeFragment() === link.fragment ? 'page' : null">
-            {{ link.label }}
-          </a>
-        }
-      </nav>
+  <div class="mobile-menu-panel">
+    <!-- Mobile Navigation Links -->
+    <nav class="mobile-menu-nav" aria-label="Main Navigation">
+      @for (link of navLinks(); track link.fragment) {
+      <a [routerLink]="'/'" [fragment]="link.fragment" (click)="onNavLinkClick(link.fragment)"
+        [attr.aria-current]="navigationService.activeFragment() === link.fragment ? 'page' : null">
+        {{ link.label }}
+      </a>
+      }
+    </nav>
 
-      <div class="mobile-controls">
-        <button 
-          type="button"
-          (click)="toggleTheme()" 
-          class="mobile-control-btn-icon" 
-          [attr.aria-label]="'Switch to ' + (themeService.theme() === 'light' ? 'dark' : 'light') + ' theme'">
-          @switch (themeService.theme()) {
-            @case ('light') {
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            }
-            @case ('dark') {
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-            }
-          }
-        </button>
-        <app-volume-control class="flex-grow"></app-volume-control>
-      </div>
+    <!-- Mobile Controls (Theme Switcher and Volume) -->
+    <div class="mobile-controls">
+      <button type="button" (click)="toggleTheme()" class="mobile-control-btn-icon"
+        [attr.aria-label]="'Switch to ' + (themeService.theme() === 'light' ? 'dark' : 'light') + ' theme'">
+        @switch (themeService.theme()) {
+        @case ('light') {
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+        }
+        @case ('dark') {
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+          </path>
+        </svg>
+        }
+        }
+      </button>
+      <app-volume-control class="flex-grow"></app-volume-control>
     </div>
+  </div>
   }
 </header>

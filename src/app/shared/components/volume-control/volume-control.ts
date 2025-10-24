@@ -9,19 +9,21 @@ import {
   input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SoundService } from '../../../core/services/sound';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { SoundService } from '../../../core/services/sound';
 
 @Component({
   selector: 'app-volume-control',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './volume-control.html',
-  styleUrl: './volume-control.scss',
+  styleUrls: ['./volume-control.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VolumeControl {
+  /** Input to know if the parent header is in its shrunk state. */
   isShrunk = input(false);
 
   // --- SERVICE INJECTIONS ---
@@ -32,19 +34,25 @@ export class VolumeControl {
   private readonly isHovering = signal(false);
   private readonly isDragging = signal(false);
 
-  /** Responsive check for mobile viewport */
+  /** Responsive check for small viewports. */
   private readonly isMobile = toSignal(
     this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((result) => result.matches)),
     { initialValue: false }
   );
 
   // --- COMPUTED SIGNALS ---
-  /** Determines if the volume slider should be visible, simplifying the logic */
+  /** Determines if the volume slider should be visible. */
   readonly isSliderVisible = computed(() => {
-    if (this.isShrunk()) return false; 
-    
+    // Never show the slider if the header is shrunk
+    if (this.isShrunk()) return false;
+
+    // Always hide slider if globally muted
     if (this.soundService.isMuted()) return false;
-    if (this.isMobile()) return true; // Always show on mobile if not muted
+
+    // On mobile, the slider is always visible when unmuted
+    if (this.isMobile()) return true;
+
+    // On desktop, show on hover or while dragging the slider
     return this.isHovering() || this.isDragging();
   });
 

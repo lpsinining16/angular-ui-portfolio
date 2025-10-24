@@ -1,4 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
 @use 'tailwindcss/base';
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
@@ -6,65 +5,81 @@
 :root {
   --background: #fffbfe;
   --surface: #ffffff;
+  --surface-rgb: 255, 255, 255;
   --primary: #6750a4;
   --primary-container: #eaddff;
-   --primary-container-hover: #d3c3f0; /* A slightly darker shade of eaddff for hover */
+  --primary-container-hover: #d3c3f0;
   --text-color: #1c1b1f;
+  --text-muted: #625c68;
+  --outline-variant: #cac4d0;
+  --primary-muted: #9e91b7;
+  --secondary-track: #f2ecfa;
 
-  /* New text-muted variable for subtle text */
-  --text-muted: #625c68; /* A slightly softer dark gray for light mode */
+  /* New: Scroll progress bar variables */
+  --progress-bar-bg: var(--primary);
+  --progress-bar-track: var(--primary-container);
 
-  /* Light mode section backgrounds */
-  --section-1-bg: #fffbfe; /* same as background */
-  --section-2-bg: #f2ecfa; /* soft light gray/lavender */
+  /* Section backgrounds */
+  --section-1-bg: #fffbfe;
+  --section-2-bg: #f2ecfa;
   --section-3-bg: #ffffff;
   --section-4-bg: #f2ecfa;
   --section-5-bg: #ffffff;
 
+  /* Effects */
   --bubble-bg: rgba(103, 80, 164, 0.2);
   --bubble-shadow: 0 0 10px rgba(103, 80, 164, 0.3);
-
-  /* Image glow animation start/end colors */
   --image-glow-start: 0 0 20px var(--primary);
   --image-glow-end: 0 0 35px var(--bubble-shadow);
-
-  /* Primary container soft for bubble variations */
-  --primary-container-soft: rgba(234, 221, 255, 0.7); /* EADDFF with 70% opacity */
-
-  --primary-muted: #9e91b7; // A muted version of your primary color for the icon when muted
-  --secondary-track: #9370d8; // Light gray for slider track
+  --primary-container-soft: rgba(234, 221, 255, 0.7);
 }
 
 .dark {
   --background: #1c1b1f;
   --surface: #2a292e;
+  --surface-rgb: 42, 41, 46;
   --primary: #d0bcff;
   --primary-container: #4f378b;
-  --primary-container-hover: #674ea7; /* A slightly lighter shade of 4f378b for hover */
+  --primary-container-hover: #674ea7;
   --text-color: #e6e1e5;
+  --text-muted: #a39ea7;
+  --outline-variant: #49454f;
+  --primary-muted: #8a73c0;
+  --secondary-track: #3a383d;
 
-  /* New text-muted variable for subtle text */
-  --text-muted: #a39ea7; /* A slightly softer light gray for dark mode */
+  /* New: Scroll progress bar variables */
+  --progress-bar-bg: var(--primary);
+  --progress-bar-track: var(--primary-container);
 
-  /* Dark mode section backgrounds */
-  --section-1-bg: #1c1b1f; /* blackish */
-  --section-2-bg: #2a292e; /* dark gray */
+  /* Section backgrounds */
+  --section-1-bg: #1c1b1f;
+  --section-2-bg: #2a292e;
   --section-3-bg: #1c1b1f;
   --section-4-bg: #2a292e;
   --section-5-bg: #1c1b1f;
 
+  /* Effects */
   --bubble-bg: rgba(208, 188, 255, 0.15);
   --bubble-shadow: 0 0 10px rgba(208, 188, 255, 0.25);
-
-  /* Image glow animation start/end colors */
   --image-glow-start: 0 0 20px var(--primary);
   --image-glow-end: 0 0 35px var(--bubble-shadow);
+  --primary-container-soft: rgba(79, 55, 139, 0.7);
+}
 
-  /* Primary container soft for bubble variations */
-  --primary-container-soft: rgba(79, 55, 139, 0.7); /* 4F378B with 70% opacity */
+body {
+  background-color: var(--background);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  --primary-muted: #8a73c0; // A muted version of your dark primary color
-  --secondary-track-dark: #3a383d; // Dark gray for slider track
+html {
+  scroll-behavior: smooth;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // ensures equal card height in grid
 }
 
 /* Keyframe for the 'rise' animation */
@@ -107,18 +122,15 @@
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.project-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%; // ensures equal card height in grid
+@keyframes halo-ripple {
+  0% {
+    /* Start slightly larger than the button, fully visible */
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    /* Expand to be much larger and completely fade out */
+    transform: scale(1.6);
+    opacity: 0;
+  }
 }

@@ -73,10 +73,10 @@ export class ApiService {
 
   // --- NAVIGATION ---
   readonly navLinks = signal<NavLink[]>([
+    { label: 'Home', fragment: 'home' },
     { label: 'About', fragment: 'about' },
     { label: 'Skills', fragment: 'skills' },
     { label: 'Projects', fragment: 'projects' },
-    { label: 'Career', fragment: 'career' },
     { label: 'Contact Me', fragment: 'contact', isContact: true },
   ]);
 
@@ -95,7 +95,7 @@ export class ApiService {
     about3:`When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects, and
       spending time with my family.`,
     email: 'larry.sinining@gmail.com',
-    phone: '+639936081692',
+    phone: '+639271282408',
     location: 'General Trias, Cavite, PH',
     linkedin: 'https://linkedin.com/in/lpsinining',
     github: 'https://github.com/lpsinining16',
