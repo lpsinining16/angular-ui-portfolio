@@ -1,8 +1,100 @@
+@use 'sass:math';
+
 :host {
   display: block;
   background-color: var(--section-2-bg);
   transition: background-color 0.3s ease;
   position: relative;
+}
+
+/* --- Bubble Background Animation --- */
+.bubbles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -10rem;
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatUp 20s infinite ease-in;
+  will-change: transform, opacity;
+
+  @apply bg-purple-500/10 dark:bg-white/5 border border-purple-500/20 dark:border-white/10;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-150vh);
+    opacity: 0;
+  }
+}
+
+@for $i from 1 through 15 {
+  .bubble:nth-child(#{$i}) {
+    $size: #{math.random(80) + 20}px;
+    $left: #{math.random(100)}vw;
+    $delay: #{math.random(20)}s;
+    $duration: #{math.random(10) + 15}s;
+
+    width: $size;
+    height: $size;
+    left: $left;
+    animation-delay: $delay;
+    animation-duration: $duration;
+  }
+}
+
+/* --- ENHANCED Profile Section UI --- */
+.profile-card {
+  @apply relative w-full max-w-sm md:max-w-md h-[28rem] md:h-[32rem];
+  @apply rounded-3xl overflow-hidden p-0; /* Padding removed for edge-to-edge image */
+
+  // Solid white/dark background
+  @apply bg-white dark:bg-gray-800;
+
+  // Refined border and shadow
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply shadow-2xl shadow-purple-900/10;
+
+  // 3D Hover Effect Setup
+  perspective: 1000px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    @apply border-gray-300 dark:border-gray-600;
+    transform: rotateX(5deg) rotateY(-5deg) scale(1.05);
+    @apply shadow-lg shadow-purple-400/20;
+  }
+}
+
+.stat-item {
+  @apply flex flex-col items-center text-center p-4 rounded-2xl;
+
+  // Solid white/dark background
+  @apply bg-white dark:bg-gray-800;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply transition-all duration-300;
+
+  &:hover {
+    @apply bg-gray-50 dark:bg-gray-700 transform -translate-y-1;
+  }
 }
 
 /* --- Card Stack Physics --- */
@@ -11,16 +103,13 @@
 }
 
 .card {
-  // Use will-change for performant animations
   will-change: transform, opacity;
-  // Use a smooth easing function for card transitions
   transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   transform-origin: 50% 0%;
-  // Improve rendering during 3D transformations
   backface-visibility: hidden;
 }
 
-/* --- Custom Scrollbar for Modal Sidebar and Card Body --- */
+/* --- Custom Scrollbar for Modal --- */
 .custom-scrollbar {
   &::-webkit-scrollbar {
     width: 6px;
@@ -34,4 +123,54 @@
   &::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-600;
   }
+}
+
+/* --- Accessibility Utility --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --- Modal Navigation Buttons --- */
+.nav-button {
+  @apply absolute top-1/2 -translate-y-1/2 z-20;
+  @apply bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm;
+  @apply text-gray-800 dark:text-white;
+  @apply rounded-full p-2 shadow-md;
+  @apply hover:scale-110 hover:bg-purple-100 dark:hover:bg-purple-900;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500;
+}
+
+/* --- MODAL UI/UX IMPROVEMENTS --- */
+.responsibility-item {
+  @apply flex items-start gap-3 text-gray-700 dark:text-gray-300;
+
+  .icon {
+    @apply w-5 h-5 flex-shrink-0 mt-0.5 text-purple-600 dark:text-purple-400;
+  }
+}
+
+.job-button {
+  @apply w-full text-left p-4 rounded-xl transition-all duration-200 border-l-4;
+
+  &.selected {
+    @apply bg-purple-100 dark:bg-[var(--primary-container)] border-purple-600 shadow-inner;
+    transform: scale(1.02);
+  }
+
+  &:not(.selected) {
+    @apply border-transparent hover:bg-white/50 dark:hover:bg-gray-800/50;
+  }
+}
+
+.btn-icon {
+  @apply w-5 h-5 mr-2;
 }

@@ -19,7 +19,7 @@ main > * {
 }
 
 // Make Home a full-screen hero section
-app-home {
+app-home, app-about {
   min-height: calc(100vh - 80px); // adjust header height if needed
   display: flex;
   align-items: center; // vertical center

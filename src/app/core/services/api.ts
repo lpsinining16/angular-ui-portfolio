@@ -338,7 +338,7 @@ export class ApiService {
           ],
         },
         {
-          title: 'G2TT - Gaming Table Transaction Tracker',
+          title: 'Gaming Table Transaction Tracker',
           tags: ['Transaction Logging', 'Audit Trail', 'Compliance'],
           link: '',
           coreFunctions: [
