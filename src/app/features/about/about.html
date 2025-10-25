@@ -1,188 +1,77 @@
 <section class="relative w-full py-24 md:py-32 overflow-hidden bg-section-2-bg">
-  <!-- Faint Background Text -->
-  <span
-    class="absolute top-20 left-1/2 -translate-x-1/2 text-[10rem] md:text-[14rem] font-extrabold text-gray-900/5 dark:text-white/5 select-none pointer-events-none"
-    aria-hidden="true">
-    larscript.io
-  </span>
-
-  <!-- Bubble Animation Container -->
-  <div class="bubbles-container" aria-hidden="true">
-    @for (_ of [].constructor(15); track $index) {
-    <div class="bubble"></div>
-    }
-  </div>
-
   <div class="container mx-auto px-6 max-w-6xl relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
 
-      <!-- Left Column: Profile Image & Stats -->
-      <div class="lg:col-span-5 flex flex-col items-center">
-        <!-- Profile Image Card -->
-        <figure class="profile-card group">
-          <div class="relative w-full h-full">
-            <img ngSrc="images/sophisticated_selfie.png" [alt]="profile().name + ' profile picture'" fill
-              class="object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
-          </div>
-        </figure>
+      <!-- Left Column -->
+      <div class="lg:col-span-5">
+        <!-- This new inner div handles the flex layout, fixing the bug -->
+        <div class="flex flex-col items-center">
+          <!-- Profile Image Card -->
+          <figure class="profile-card group">
+            <div class="relative w-full h-full">
+              <img ngSrc="images/sophisticated_selfie.png" [alt]="profile().name + ' profile picture'" fill
+                class="object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+            </div>
+          </figure>
 
-        <!-- Stats Grid -->
-        <dl class="grid grid-cols-3 gap-4 mt-12 w-full max-w-lg">
-          <div class="stat-item">
-            <dt #statRef [attr.data-target]="currentJobYears()"
-              class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0.0</dt>
-            <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">Years
-              of
-              Experience</dd>
-          </div>
-          <div class="stat-item">
-            <dt #statRef [attr.data-target]="professionalProjectsCount()"
-              class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0</dt>
-            <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">
-              Professional Projects</dd>
-          </div>
-          <div class="stat-item">
-            <dt #statRef [attr.data-target]="personalProjectsCount()"
-              class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0</dt>
-            <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">
-              Personal Projects</dd>
-          </div>
-        </dl>
+          <!-- Stats Grid -->
+          <dl class="grid grid-cols-3 gap-4 mt-12 w-full max-w-lg">
+            <div class="stat-item">
+              <dt #statRef [attr.data-target]="currentJobYears()"
+                class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0.0</dt>
+              <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">
+                Years of
+                Experience</dd>
+            </div>
+            <div class="stat-item">
+              <dt #statRef [attr.data-target]="professionalProjectsCount()"
+                class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0</dt>
+              <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">
+                Professional Projects</dd>
+            </div>
+            <div class="stat-item">
+              <dt #statRef [attr.data-target]="personalProjectsCount()"
+                class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white order-1">0</dt>
+              <dd class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider order-2">
+                Personal Projects</dd>
+            </div>
+          </dl>
+        </div>
       </div>
 
-      <!-- Right Column: Bio Content -->
-      <div class="lg:col-span-7 flex flex-col justify-center">
-        <article>
-          <header>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">{{ profile().name }}</h1>
-            <h2 class="text-lg md:text-xl font-semibold text-purple-700 dark:text-purple-300 mt-2">{{ profile().headline
-              }}</h2>
-          </header>
-          <div class="mt-4 space-y-4 text-gray-700 dark:text-gray-300 leading-loose max-w-prose">
-            @for (paragraph of aboutParagraphs(); track $index) {
-            <p>{{ paragraph }}</p>
-            }
-          </div>
-          <button
-            class="group mt-8 inline-flex items-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-105 hover:shadow-purple-400/50 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300"
-            (click)="openModal()">
-            <span>View Journey</span>
-            <!-- FIXED: Corrected the stroke-linejoin attribute in the path tag below -->
-            <svg xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </article>
+      <!-- Right Column -->
+      <div class="lg:col-span-7">
+        <!-- This new inner div handles the flex layout and vertical centering -->
+        <div class="flex flex-col justify-center h-full">
+          <article>
+            <header>
+              <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">{{ profile().name }}</h1>
+              <h2 class="mt-4 inline-block">
+                <span class="headline-badge">
+                  {{ profile().headline }}
+                </span>
+              </h2>
+            </header>
+            <div class="bio-content mt-6 space-y-4 text-gray-700 dark:text-gray-300 leading-loose max-w-prose">
+              @for (paragraph of aboutParagraphs(); track $index) {
+              <p>{{ paragraph }}</p>
+              }
+            </div>
+            <button class="btn-primary group mt-8" (click)="openCareerModal()">
+              <span>View Journey</span>
+              <svg xmlns="http://www.w.org/2000/svg"
+                class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </article>
+        </div>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- MODAL: Professional Journey -->
-@if (isModalOpen()) {
-<div #modalContainer class="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4" role="dialog"
-  aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description"
-  (keydown)="handleModalKeydown($event)">
-
-  <!-- Backdrop -->
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity animate-in fade-in-0 duration-300"
-    (click)="closeModal()" aria-hidden="true"></div>
-
-  <!-- Modal Panel -->
-  <div
-    class="relative z-10 w-full max-w-6xl bg-gray-100 dark:bg-gray-900/70 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-5 duration-300">
-
-    <!-- Header -->
-    <header class="flex justify-between items-center p-6 bg-purple-100/50 dark:bg-[var(--primary-container)]">
-      <div>
-        <h3 id="modal-title" class="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary)]">Professional
-          Journey</h3>
-        <p id="modal-description" class="sr-only">A detailed view of my professional journey.</p>
-      </div>
-      <button #closeModalButton (click)="closeModal()" aria-label="Close modal"
-        class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </header>
-
-    <!-- Body Content Grid -->
-    <div class="flex-1 grid grid-cols-1 md:grid-cols-12 min-h-0">
-      <!-- Sidebar: Job List -->
-      <aside class="md:col-span-4 border-r border-gray-200 dark:border-gray-800 overflow-y-auto p-4 custom-scrollbar">
-        <nav class="space-y-2">
-          @for (job of workExperience(); track job.title; let i = $index) {
-          <button (click)="selectJob(i)" class="job-button" [class.selected]="selectedJobIndex() === i">
-            <div class="font-bold text-gray-900 dark:text-white">{{ job.title }}</div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ job.company }}</div>
-            <div class="text-xs text-gray-500 mt-2">{{ formatJobDuration(job.duration) }}</div>
-          </button>
-          }
-        </nav>
-      </aside>
-
-      <!-- Main Area: Card Stack -->
-      <main class="md:col-span-8 p-6 md:p-10 overflow-hidden flex flex-col relative" (wheel)="handleWheel($event)">
-        <div class="text-center mb-6 text-sm text-gray-500 dark:text-gray-400 animate-pulse">
-          Scroll or use arrows to navigate
-        </div>
-        <div class="relative flex-1 w-full max-w-xl mx-auto h-[450px] perspective-1000">
-          @for (job of workExperience(); track job.title; let i = $index) {
-          <article
-            class="card absolute inset-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-gray-200 dark:border-gray-700/50 flex flex-col overflow-hidden"
-            [ngStyle]="getCardStyles(i)">
-            <header class="p-6 bg-purple-100/50 dark:bg-[var(--primary-container)]">
-              <h4 class="text-xl font-bold text-center text-[var(--primary)] dark:text-[var(--primary)]">{{ job.title }}
-              </h4>
-              <p class="text-md text-center font-medium text-gray-600 dark:text-gray-400 mt-1">{{ job.company }}</p>
-            </header>
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
-              <ul class="space-y-4">
-                @for (point of job.points; track $index) {
-                <li class="responsibility-item">
-                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd" />
-                  </svg>
-                  <span>{{ point }}</span>
-                </li>
-                }
-              </ul>
-            </div>
-          </article>
-          }
-        </div>
-
-        <!-- Navigation Buttons -->
-        <button (click)="previousJob()" aria-label="Previous experience" class="nav-button left-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button (click)="nextJob()" aria-label="Next experience" class="nav-button right-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </main>
-    </div>
-
-    <!-- Footer -->
-    <footer class="p-4 border-t border-gray-200 dark:border-gray-800 flex justify-end">
-      <button (click)="downloadCV()"
-        class="flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300">
-        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-        <span>Download Full Resumé</span>
-      </button>
-    </footer>
-  </div>
-</div>
-}
+<!-- The Career component is now responsible for its own modal -->
+<app-career #careerModal></app-career>

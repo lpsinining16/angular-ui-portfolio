@@ -1,5 +1,3 @@
-@use 'sass:math';
-
 :host {
   display: block;
   background-color: var(--section-2-bg);
@@ -7,73 +5,13 @@
   position: relative;
 }
 
-/* --- Bubble Background Animation --- */
-.bubbles-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.bubble {
-  position: absolute;
-  bottom: -10rem;
-  border-radius: 50%;
-  opacity: 0;
-  animation: floatUp 20s infinite ease-in;
-  will-change: transform, opacity;
-
-  @apply bg-purple-500/10 dark:bg-white/5 border border-purple-500/20 dark:border-white/10;
-}
-
-@keyframes floatUp {
-  0% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-150vh);
-    opacity: 0;
-  }
-}
-
-@for $i from 1 through 15 {
-  .bubble:nth-child(#{$i}) {
-    $size: #{math.random(80) + 20}px;
-    $left: #{math.random(100)}vw;
-    $delay: #{math.random(20)}s;
-    $duration: #{math.random(10) + 15}s;
-
-    width: $size;
-    height: $size;
-    left: $left;
-    animation-delay: $delay;
-    animation-duration: $duration;
-  }
-}
-
 /* --- ENHANCED Profile Section UI --- */
 .profile-card {
   @apply relative w-full max-w-sm md:max-w-md h-[28rem] md:h-[32rem];
-  @apply rounded-3xl overflow-hidden p-0; /* Padding removed for edge-to-edge image */
-
-  // Solid white/dark background
+  @apply rounded-3xl overflow-hidden p-0;
   @apply bg-white dark:bg-gray-800;
-
-  // Refined border and shadow
   @apply border border-gray-200 dark:border-gray-700;
   @apply shadow-2xl shadow-purple-900/10;
-
-  // 3D Hover Effect Setup
   perspective: 1000px;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 
@@ -86,8 +24,6 @@
 
 .stat-item {
   @apply flex flex-col items-center text-center p-4 rounded-2xl;
-
-  // Solid white/dark background
   @apply bg-white dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700;
   @apply transition-all duration-300;
@@ -97,80 +33,56 @@
   }
 }
 
-/* --- Card Stack Physics --- */
-.perspective-1000 {
-  perspective: 1000px;
+.headline-badge {
+  @apply inline-block px-4 py-2 rounded-full;
+  @apply text-lg font-semibold;
+  background-color: var(--primary-container);
+  color: var(--primary);
 }
 
-.card {
-  will-change: transform, opacity;
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  transform-origin: 50% 0%;
-  backface-visibility: hidden;
-}
+.bio-content {
+  @apply relative pl-6;
 
-/* --- Custom Scrollbar for Modal --- */
-.custom-scrollbar {
-  &::-webkit-scrollbar {
-    width: 6px;
+  &::before {
+    content: '';
+    @apply absolute left-0 top-1 w-1 h-full rounded-full;
+    background-color: var(--primary-container);
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-600;
+
+  p:first-of-type::first-letter {
+    @apply float-left mr-3 font-bold;
+    color: var(--primary);
+    font-size: 4.5rem;
+    line-height: 0.8;
   }
 }
 
-/* --- Accessibility Utility --- */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
+/*
+  FINAL VERSION: Reusable, theme-aware primary button style
+  This version uses the specific variables from your styles.scss
+*/
+.btn-primary {
+  @apply inline-flex items-center text-white font-semibold px-6 py-3 rounded-full;
+  @apply shadow-lg transition-all duration-300;
 
-/* --- Modal Navigation Buttons --- */
-.nav-button {
-  @apply absolute top-1/2 -translate-y-1/2 z-20;
-  @apply bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm;
-  @apply text-gray-800 dark:text-white;
-  @apply rounded-full p-2 shadow-md;
-  @apply hover:scale-110 hover:bg-purple-100 dark:hover:bg-purple-900;
-  @apply transition-all duration-200;
-  @apply focus:outline-none focus:ring-2 focus:ring-purple-500;
-}
+  // Use the primary color for the background
+  background-color: var(--primary);
 
-/* --- MODAL UI/UX IMPROVEMENTS --- */
-.responsibility-item {
-  @apply flex items-start gap-3 text-gray-700 dark:text-gray-300;
+  // Create a soft, colored glow using the primary-container variable
+  box-shadow: 0 4px 14px 0 var(--primary-container);
 
-  .icon {
-    @apply w-5 h-5 flex-shrink-0 mt-0.5 text-purple-600 dark:text-purple-400;
-  }
-}
-
-.job-button {
-  @apply w-full text-left p-4 rounded-xl transition-all duration-200 border-l-4;
-
-  &.selected {
-    @apply bg-purple-100 dark:bg-[var(--primary-container)] border-purple-600 shadow-inner;
-    transform: scale(1.02);
+  &:hover {
+    @apply scale-105;
+    // Brighten the button slightly on hover for a clean effect
+    filter: brightness(1.1);
+    // Intensify the shadow on hover
+    box-shadow: 0 7px 20px 0 var(--primary-container);
   }
 
-  &:not(.selected) {
-    @apply border-transparent hover:bg-white/50 dark:hover:bg-gray-800/50;
+  &:focus-visible {
+    @apply outline-none ring-4;
+    // Use the primary-container color for a consistent focus ring
+    --ring-color: var(--primary-container);
+    box-shadow: 0 0 0 4px var(--ring-color);
   }
-}
-
-.btn-icon {
-  @apply w-5 h-5 mr-2;
 }

@@ -1,5 +1,145 @@
-:host {
-  display: block;
-  background-color: var(--section-1-bg);
-  transition: background-color 0.3s ease;
+/* --- Base Modal Styles --- */
+.modal-panel {
+  background-color: var(--surface);
+}
+
+.modal-header, .modal-footer {
+  background-color: var(--primary-container-soft);
+  border-color: var(--outline-variant);
+}
+
+.modal-footer {
+  @apply border-t;
+}
+
+.modal-title, .card-title {
+  color: var(--primary);
+}
+
+.close-button {
+  color: var(--text-muted);
+  transition: background-color 0.2s ease;
+  &:hover {
+    background-color: var(--primary-container-hover);
+  }
+}
+
+.modal-sidebar {
+  border-right: 1px solid var(--outline-variant);
+}
+
+.navigation-hint, .job-company, .job-duration, .card-company {
+  color: var(--text-muted);
+}
+
+.job-title {
+  color: var(--text-color);
+}
+
+/* --- Card Stack & Experience Card --- */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.card {
+  will-change: transform, opacity;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+}
+
+.experience-card {
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+}
+
+.experience-card-header {
+  background-color: var(--primary-container-soft);
+}
+
+/* --- Interactive Elements --- */
+.job-button {
+  @apply w-full text-left p-4 rounded-xl transition-all duration-200 border-l-4 border-transparent;
+  
+  &.selected {
+    background-color: var(--primary-container);
+    border-color: var(--primary);
+    transform: scale(1.02);
+  }
+  
+  &:not(.selected):hover {
+    background-color: rgba(var(--surface-rgb), 0.5); // Use surface with transparency for subtle hover
+  }
+}
+
+.nav-button {
+  @apply absolute top-1/2 -translate-y-1/2 z-20;
+  @apply rounded-full p-2 shadow-md;
+  @apply transition-all duration-200;
+  
+  background-color: rgba(var(--surface-rgb), 0.5);
+  backdrop-filter: blur(4px);
+  color: var(--text-color);
+
+  &:hover {
+    @apply scale-110;
+    background-color: var(--primary-container);
+  }
+  &:focus-visible {
+    @apply outline-none ring-2;
+    --ring-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--ring-color);
+  }
+}
+
+.responsibility-item {
+  @apply flex items-start gap-3;
+  color: var(--text-color);
+  
+  .icon {
+    @apply w-5 h-5 flex-shrink-0 mt-0.5;
+    color: var(--primary);
+  }
+}
+
+/* Themed Primary Button for this component */
+.download-button {
+  @apply inline-flex items-center text-white font-semibold px-6 py-3 rounded-full;
+  @apply shadow-lg transition-all duration-300;
+  
+  background-color: var(--primary);
+  box-shadow: 0 4px 14px 0 var(--primary-container);
+
+  &:hover {
+    @apply scale-105;
+    filter: brightness(1.1);
+    box-shadow: 0 7px 20px 0 var(--primary-container);
+  }
+
+  &:focus-visible {
+    @apply outline-none ring-4;
+    --ring-color: var(--primary-container);
+    box-shadow: 0 0 0 4px var(--ring-color);
+  }
+}
+
+.btn-icon {
+  @apply w-5 h-5 mr-2;
+}
+
+/* --- Utilities --- */
+.custom-scrollbar {
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
+  }
+}
+
+.sr-only {
+  @apply absolute w-px h-px p-0 m-[-1px] overflow-hidden whitespace-nowrap border-0;
+  clip: rect(0, 0, 0, 0);
 }

@@ -1,7 +1,100 @@
-<section class="py-20 text-center">
-  <h2 class="text-4xl font-bold text-center mb-8">Professional Journey</h2>
-  <p class="max-w-3xl mx-auto text-lg mb-10">
-    With a solid foundation in software engineering and a passion for front-end development, I have contributed to diverse projects, from legacy system modernization to enterprise-grade web applications. My goal is to continue building intuitive, high-performance user interfaces.
-  </p>
- 
-</section>
+<!-- MODAL: Professional Journey -->
+@if (isModalOpen()) {
+<div #modalContainer class="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4" role="dialog"
+  aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description"
+  (keydown)="handleModalKeydown($event)">
+
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity animate-in fade-in-0 duration-300"
+    (click)="closeModal()" aria-hidden="true"></div>
+
+  <!-- Modal Panel -->
+  <div
+    class="modal-panel relative z-10 w-full max-w-6xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-5 duration-300">
+
+    <!-- Header -->
+    <header class="modal-header flex justify-between items-center p-6">
+      <div>
+        <h3 id="modal-title" class="modal-title text-2xl font-bold">Professional Journey</h3>
+        <p id="modal-description" class="sr-only">A detailed view of my professional journey.</p>
+      </div>
+      <button #closeModalButton (click)="closeModal()" aria-label="Close modal" class="close-button p-2 rounded-full">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Body Content Grid -->
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-12 min-h-0">
+      <!-- Sidebar: Job List -->
+      <aside class="modal-sidebar md:col-span-4 overflow-y-auto p-4 custom-scrollbar">
+        <nav class="space-y-2">
+          @for (job of workExperience(); track job.title; let i = $index) {
+          <button (click)="selectJob(i)" class="job-button" [class.selected]="selectedJobIndex() === i">
+            <div class="font-bold job-title">{{ job.title }}</div>
+            <div class="text-sm job-company mt-1">{{ job.company }}</div>
+            <div class="text-xs job-duration mt-2">{{ formatJobDuration(job.duration) }}</div>
+          </button>
+          }
+        </nav>
+      </aside>
+
+      <!-- Main Area: Card Stack -->
+      <main class="md:col-span-8 p-6 md:p-10 overflow-hidden flex flex-col relative" (wheel)="handleWheel($event)">
+        <div class="navigation-hint text-center mb-6 text-sm animate-pulse">
+          Scroll or use arrows to navigate
+        </div>
+        <div class="relative flex-1 w-full max-w-xl mx-auto h-[450px] perspective-1000">
+          @for (job of workExperience(); track job.title; let i = $index) {
+          <article class="experience-card card absolute inset-0 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            [ngStyle]="getCardStyles(i)">
+            <header class="experience-card-header p-6">
+              <h4 class="text-xl font-bold text-center card-title">{{ job.title }}</h4>
+              <p class="text-md text-center font-medium card-company mt-1">{{ job.company }}</p>
+            </header>
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+              <ul class="space-y-4">
+                @for (point of job.points; track $index) {
+                <li class="responsibility-item">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <span>{{ point }}</span>
+                </li>
+                }
+              </ul>
+            </div>
+          </article>
+          }
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button (click)="previousJob()" aria-label="Previous experience" class="nav-button left-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button (click)="nextJob()" aria-label="Next experience" class="nav-button right-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="modal-footer p-4 flex justify-end">
+      <button (click)="downloadCV()" class="download-button">
+        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        <span>Download Full Resumé</span>
+      </button>
+    </footer>
+  </div>
+</div>
+}
