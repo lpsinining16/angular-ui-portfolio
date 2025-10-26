@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ApiService } from '../../core/services/api';
 import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-contact',
-  imports: [Bubbles],
+  imports: [Bubbles, NgOptimizedImage],
   templateUrl: './contact.html',
   styleUrl: './contact.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

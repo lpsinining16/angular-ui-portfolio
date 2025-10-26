@@ -51,9 +51,8 @@
       <!-- Modal Header -->
       <div class="modal-header">
         <h3 class="modal-title" [id]="'modal-title-' + selectedProject()?.title">{{ selectedProject()?.title }}</h3>
-        <!-- Action Buttons Group -->
         <div class="flex items-center gap-2">
-          <!-- MOVED: "View Site" button is now in the header -->
+          <!-- FIXED: Logic updated to hide button if link is an empty string -->
           @if (selectedProject()?.link && selectedProject()?.link?.trim() !== '') {
           <a [href]="selectedProject()?.link" target="_blank" rel="noopener noreferrer" class="btn-site-link">
             <span>View Site</span>
@@ -76,9 +75,7 @@
       <div class="modal-body">
         <!-- Main Details Section -->
         <div class="project-details-header">
-          <!-- Left Column: Project Logo -->
           <div class="project-logo-placeholder">
-            <!-- RESIZED: SVG is now smaller -->
             <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -86,7 +83,6 @@
             </svg>
           </div>
 
-          <!-- Right Column: Description, Tech -->
           <div class="project-details-content">
             @if (selectedProject()?.company) {
             <p class="project-company-info">{{ selectedProject()?.company }}</p>
