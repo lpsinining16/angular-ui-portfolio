@@ -5,160 +5,209 @@
 
 .projects-section {
   background-color: var(--section-2-bg);
+  color: var(--text-color);
   transition: background-color 0.3s ease;
   min-height: 100vh;
-  overflow: hidden;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.project-group h3 {
+  border-color: var(--outline-variant);
 }
 
 /* --- Project Card Styling --- */
+.project-card {
+  @apply flex flex-col rounded-lg overflow-hidden;
+  @apply transition-all duration-300;
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+  &:hover {
+    @apply -translate-y-2;
+    box-shadow: 0 10px 15px -3px var(--primary-container), 0 4px 6px -2px var(--primary-container);
+    border-color: var(--primary);
+  }
+}
+
 .project-card-header {
-  background-color: var(--primary-container);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
+  @apply p-6 flex flex-col items-center justify-center text-center;
+  background-color: var(--primary-container-soft);
+  color: var(--primary);
+  border-bottom: 1px solid var(--outline-variant);
+  min-height: 110px;
 }
 
 .project-card-body {
-  background-color: var(--surface);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* Ensures body takes up remaining space */
-  border-bottom: 2px solid var(--primary-container);
+  @apply p-6 flex flex-col flex-grow;
 }
 
-/* --- Details Button --- */
-.details-btn {
-  @apply px-4 py-2 rounded-md bg-light-primary text-white; /* Light mode: primary bg, white text */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* --- Shared "Pill" Styles --- */
+.tech-pill {
+  @apply px-3 py-1 text-xs rounded-full font-medium;
+  background-color: var(--primary-container);
+  color: var(--primary);
+}
 
-  .dark & {
-    /* Apply these styles when parent has 'dark' class */
-    @apply bg-dark-primary-container text-dark-primary; /* Dark mode: primary-container bg, primary text */
-  }
+/* --- Primary Button --- */
+.btn-primary {
+  @apply inline-flex items-center justify-center text-white font-semibold px-4 py-2 rounded-md;
+  @apply shadow-lg transition-all duration-300;
+  background-color: var(--primary);
+  box-shadow: 0 4px 14px 0 var(--primary-container);
 
   &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    @apply scale-105;
+    filter: brightness(1.1);
+    box-shadow: 0 7px 20px 0 var(--primary-container);
   }
 }
 
 /* --- Modal --- */
 .modal-backdrop {
-  @apply fixed inset-0 flex items-center justify-center bg-black/60;
+  @apply fixed inset-0 flex items-center justify-center p-4;
+  background-color: rgba(var(--surface-rgb), 0.5);
+  backdrop-filter: blur(8px);
   z-index: 1000;
-  padding: 1rem;
-  backdrop-filter: blur(4px);
+  animation: fade-in 0.3s ease-out;
 }
 
 .modal-content {
-  background-color: var(--section-2-bg);
-  border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  animation: modal-enter 0.6s ease-out;
+  @apply w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col;
+  @apply overflow-hidden;
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  animation: modal-enter 0.4s ease-out;
 }
 
-.modal-title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center title by default */
-  padding: 0.75rem 1rem;
-  background-color: var(--primary-container);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  position: relative;
+.modal-header {
+  @apply flex items-center justify-between p-4 flex-shrink-0;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--outline-variant);
 }
 
 .modal-title {
-  font-weight: 600;
+  @apply text-xl font-semibold;
   color: var(--primary);
 }
 
 .modal-close-btn {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  line-height: 1;
-  font-weight: bold;
+  @apply p-2 rounded-full transition-colors duration-200;
   color: var(--primary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-
   &:hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
+    background-color: var(--primary-container);
   }
 }
 
 .modal-body {
-  background-color: var(--surface);
-  padding: 1.5rem;
-  overflow-y: auto;
-  flex-grow: 1;
+  @apply p-6 overflow-y-auto;
+}
+
+/* Main details section inside modal */
+.project-details-header {
+  /* RESIZED: Grid column for logo is now smaller */
+  @apply grid grid-cols-1 md:grid-cols-[80px_1fr] gap-6 items-start mb-6;
+}
+
+.project-logo-placeholder {
+  /* RESIZED: Logo placeholder is now smaller */
+  @apply w-[80px] h-[80px] rounded-lg flex items-center justify-center;
+  background-color: var(--primary-container-soft);
+  color: var(--primary);
+  border: 1px solid var(--outline-variant);
+}
+
+.project-company-info {
+  @apply font-semibold text-sm mb-2;
+  color: var(--text-muted);
+}
+
+/* MOVED: Button style updated for header placement */
+.btn-site-link {
+  @apply inline-flex items-center text-sm font-semibold px-4 py-2 rounded-md;
+  @apply transition-colors duration-200;
+  background-color: var(--primary-container);
+  color: var(--primary);
+
+  &:hover {
+    background-color: var(--primary-container-hover);
+  }
 }
 
 /* System cards inside modal */
 .system-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid var(--primary-container, #ddd);
+  @apply flex flex-col h-full rounded-lg overflow-hidden;
+  /* RESTORED THEME: Body is now the main surface color */
   background-color: var(--surface);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden;
+  border: 1px solid var(--outline-variant);
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fade-slide-up 0.5s ease-out forwards;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+.system-cards-grid {
+  @for $i from 1 through 10 {
+    .system-card:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
   }
 }
 
 .system-card-header {
-  background-color: var(--primary-container);
-  padding: 0.75rem 1rem;
+  @apply font-semibold p-3;
+  color: var(--primary);
+  background-color: var(--primary-container-soft);
+  border-bottom: 1px solid var(--outline-variant);
 }
 
 .system-card-body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  @apply p-4 flex flex-col flex-grow;
 }
 
-/* --- Modal Enter Animation --- */
-@keyframes modal-enter {
-  0% {
+.system-card-summary {
+  @apply text-sm italic mb-4 pb-4;
+  color: var(--text-muted);
+  border-bottom: 1px dashed var(--outline-variant);
+}
+
+.system-tag {
+  @apply text-xs px-2 py-1 rounded;
+  font-weight: 500;
+  background-color: var(--primary-container-soft);
+  color: var(--primary-muted);
+}
+
+/* --- Animations --- */
+@keyframes fade-in {
+  from {
     opacity: 0;
-    transform: scale(0.95) rotate(0);
   }
-  50% {
+  to {
     opacity: 1;
-    transform: scale(1.02);
   }
-  70% {
-    transform: scale(1) rotate(-1.5deg);
+}
+
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
   }
-  90% {
-    transform: scale(1) rotate(1.5deg);
-  }
-  100% {
+  to {
     opacity: 1;
-    transform: scale(1) rotate(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

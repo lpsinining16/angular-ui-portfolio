@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ApiService, Project } from '../../core/services/api';
 import { SoundService } from '../../core/services/sound';
@@ -6,20 +6,25 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
 @Component({
   selector: 'app-projects',
+  standalone: true, // standalone is a good practice!
   imports: [CommonModule, Bubbles],
   templateUrl: './projects.html',
   styleUrls: ['./projects.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Add host listener for Escape key
+  host: {
+    '(document:keydown.escape)': 'onEscapeKeyPressed()',
+  },
 })
 export class Projects {
   private apiService = inject(ApiService);
   private soundService = inject(SoundService);
+  // Inject DOCUMENT for safe body class manipulation
+  private document = inject(DOCUMENT);
   private projects = this.apiService.projects;
 
-  // Signal to hold the currently selected project shown in the modal
   selectedProject = signal<Project | null>(null);
 
-  // Group projects by type using a computed signal for efficiency
   groupedProjects = computed(() => {
     const projects = this.projects();
     if (!projects) return [];
@@ -34,22 +39,31 @@ export class Projects {
       return acc;
     }, [] as { type: string; projects: Project[] }[]);
 
-    // Ensure 'professional' projects appear before 'personal'
     return groups.sort((a, b) => (a.type === 'professional' ? -1 : 1));
   });
 
-  openProjectModal(project: Project) {
+  openProjectModal(project: Project): void {
     this.soundService.playSound('click');
     this.selectedProject.set(project);
-    document.body.style.overflow = 'hidden';
+    // Safe way to prevent body scroll
+    this.document.body.classList.add('modal-open');
   }
 
-  closeProjectModal() {
-    this.soundService.playSound('clickClose');
-    this.selectedProject.set(null);
-    document.body.style.overflow = '';
+  closeProjectModal(): void {
+    if (this.selectedProject()) { // Only run if modal is open
+      this.soundService.playSound('clickClose');
+      this.selectedProject.set(null);
+      // Safe way to restore body scroll
+      this.document.body.classList.remove('modal-open');
+    }
   }
 
+  // Handle Escape key press
+  onEscapeKeyPressed(): void {
+    this.closeProjectModal();
+  }
+
+  // --- Bubbles Configuration ---
   bubblesConfig: Bubble[] = [
     { customStyles: { '--size': '40px', '--left': '10%', '--duration': '15s', '--delay': '0s', 'animation-name': 'rise', 'bottom': '-100px' } },
     { customStyles: { '--size': '80px', '--left': '20%', '--duration': '18s', '--delay': '2s', 'animation-name': 'rise', 'bottom': '-100px' } },

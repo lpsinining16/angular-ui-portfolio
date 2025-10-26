@@ -35,7 +35,7 @@ export class Home implements AfterViewInit, OnDestroy {
 
   // IMPROVEMENT (Code Quality): Corrected array length to 9 to match the number of styled
   // bubble elements in the SCSS, preventing the creation of unstyled DOM elements.
-  decorativeBubbles = Array.from({ length: 9 });
+  decorativeBubbles = Array.from({ length: 10 });
 
   // --- ANIMATION ON SCROLL ---
   // IMPROVEMENT (Performance): Using ViewChildren to get references to all elements

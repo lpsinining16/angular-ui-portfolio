@@ -82,6 +82,10 @@ html {
   height: 100%; // ensures equal card height in grid
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 /* Keyframe for the 'rise' animation */
 @keyframes rise {
   0% {
