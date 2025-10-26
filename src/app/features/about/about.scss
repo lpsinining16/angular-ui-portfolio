@@ -5,9 +5,9 @@
   position: relative;
 }
 
-/* --- ENHANCED Profile Section UI --- */
+/* --- Profile Section UI --- */
 .profile-card {
-  @apply relative w-full max-w-sm md:max-w-md h-[28rem] md:h-[32rem];
+  @apply relative w-full max-w-[22rem] h-[28rem] sm:max-w-sm md:max-w-md md:h-[32rem];
   @apply rounded-3xl overflow-hidden p-0;
   @apply bg-white dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700;
@@ -57,32 +57,26 @@
   }
 }
 
-/*
-  FINAL VERSION: Reusable, theme-aware primary button style
-  This version uses the specific variables from your styles.scss
-*/
 .btn-primary {
-  @apply inline-flex items-center text-white font-semibold px-6 py-3 rounded-full;
-  @apply shadow-lg transition-all duration-300;
+  @apply inline-flex items-center justify-center text-white font-semibold px-6 py-3 rounded-full;
+  @apply shadow-lg transition-all duration-300 ease-in-out;
+  @apply focus-visible:outline-none focus-visible:ring-4;
 
-  // Use the primary color for the background
   background-color: var(--primary);
-
-  // Create a soft, colored glow using the primary-container variable
   box-shadow: 0 4px 14px 0 var(--primary-container);
+  --ring-color: var(--primary-container); // Define ring color variable
+
+  .btn-icon {
+    @apply w-5 h-5 mr-2;
+  }
 
   &:hover {
     @apply scale-105;
-    // Brighten the button slightly on hover for a clean effect
     filter: brightness(1.1);
-    // Intensify the shadow on hover
     box-shadow: 0 7px 20px 0 var(--primary-container);
   }
 
   &:focus-visible {
-    @apply outline-none ring-4;
-    // Use the primary-container color for a consistent focus ring
-    --ring-color: var(--primary-container);
     box-shadow: 0 0 0 4px var(--ring-color);
   }
 }

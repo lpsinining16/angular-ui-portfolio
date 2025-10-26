@@ -14,12 +14,15 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../../core/services/api';
 import { SoundService } from '../../core/services/sound';
-import { Career } from '../career/career'; // <-- IMPORT THE CAREER COMPONENT
+import { Career } from '../career/career';
+
+const BASE_ANIMATION_DURATION = 1500; // ms
+const DYNAMIC_DURATION_FACTOR = 100; // ms to add per whole number
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, Career], // <-- ADD CAREER COMPONENT TO IMPORTS
+  imports: [CommonModule, NgOptimizedImage, Career],
   templateUrl: './about.html',
   styleUrl: './about.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,15 +33,11 @@ export class About {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  // --- Child Component Reference ---
   @ViewChild('careerModal') careerModal!: Career;
-
-  // --- Signals for State ---
-  profile = this.api.profile;
-
-  // --- UI Elements for Animation ---
   @ViewChildren('statRef') statElements!: QueryList<ElementRef<HTMLElement>>;
+
   private observer?: IntersectionObserver;
+  profile = this.api.profile;
 
   constructor() {
     afterNextRender(() => {
@@ -48,7 +47,6 @@ export class About {
     });
   }
 
-  // --- Computed Derived State ---
   aboutParagraphs = computed(() => {
     const { about, about2, about3 } = this.profile();
     return [about, about2, about3].filter(Boolean);
@@ -78,13 +76,11 @@ export class About {
       .reduce((acc, curr) => acc + curr.systems.length, 0)
   );
 
-  // --- Event Handlers ---
   openCareerModal(): void {
     this.sound.playSound('clickHover');
-    this.careerModal.openModal(); // <-- CALL THE PUBLIC METHOD ON THE CHILD
+    this.careerModal.openModal();
   }
 
-  // --- Stats Animation Logic ---
   private initIntersectionObserver(): void {
     this.observer = new IntersectionObserver(
       (entries) => {
@@ -98,7 +94,6 @@ export class About {
       },
       { threshold: 0.5 }
     );
-
     this.statElements.forEach((el) => this.observer?.observe(el.nativeElement));
   }
 
@@ -108,14 +103,15 @@ export class About {
 
     const target = parseFloat(targetStr);
     const isFloat = targetStr.includes('.');
-    const duration = 2000;
+
+    const duration = BASE_ANIMATION_DURATION + Math.floor(target) * DYNAMIC_DURATION_FACTOR;
     let startTime: number | null = null;
 
     const step = (currentTime: number) => {
       if (startTime === null) startTime = currentTime;
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 4);
+      const easedProgress = 1 - Math.pow(1 - progress, 4); // Ease-out quad
       const currentVal = easedProgress * target;
       el.innerText = isFloat ? currentVal.toFixed(1) : Math.floor(currentVal).toString();
 
