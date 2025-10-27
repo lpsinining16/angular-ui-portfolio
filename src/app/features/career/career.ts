@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
   inject,
   PLATFORM_ID,
   signal,
@@ -20,6 +21,8 @@ import { SoundService } from '../../core/services/sound';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(document:keydown.escape)': 'onEscapeKey()',
+    '(document:keydown.arrowleft)': 'onArrowKey("left")',
+    '(document:keydown.arrowright)': 'onArrowKey("right")',
   },
 })
 export class Career {
@@ -28,6 +31,7 @@ export class Career {
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private isMobile = false; // For responsive card styles
 
   // --- State ---
   profile = this.api.profile;
@@ -35,9 +39,26 @@ export class Career {
   isModalOpen = signal(false);
   selectedJobIndex = signal(0);
 
+  // --- Touch & Wheel State ---
+  private touchStartY = 0;
+  private touchMoveY = 0;
+  private lastWheelTime = 0;
+
   // --- UI Elements ---
   @ViewChild('modalContainer') modalContainer?: ElementRef<HTMLElement>;
   @ViewChild('closeModalButton') closeModalButton?: ElementRef<HTMLElement>;
+
+  constructor() {
+    // Set initial state on component load
+    this.updateMobileState();
+  }
+
+  // --- 3. ADD HostListener for window resize ---
+  @HostListener('window:resize')
+  onResize() {
+    // Update state whenever window resizes
+    this.updateMobileState();
+  }
 
   // --- Event Handlers ---
   onEscapeKey(): void {
@@ -46,11 +67,65 @@ export class Career {
     }
   }
 
+  /** Handle Arrow Key navigation */
+  onArrowKey(direction: 'left' | 'right'): void {
+    if (!this.isModalOpen()) return; // Only navigate if modal is open
+
+    if (direction === 'left') {
+      this.previousJob();
+    } else {
+      this.nextJob();
+    }
+  }
+
+  /** Record the start of a touch event */
+  handleTouchStart(event: TouchEvent): void {
+    this.touchStartY = event.touches[0].clientY;
+  }
+
+  /** Handle swipe navigation for mobile */
+  handleTouchMove(event: TouchEvent): void {
+    if (!this.touchStartY) return;
+    this.touchMoveY = event.touches[0].clientY;
+    const deltaY = this.touchMoveY - this.touchStartY;
+
+    // Threshold to prevent accidental swipes
+    if (Math.abs(deltaY) > 50) {
+      if (deltaY > 0) {
+        // Swiping down
+        this.previousJob();
+      } else {
+        // Swiping up
+        this.nextJob();
+      }
+      this.touchStartY = 0; // Reset after swipe
+    }
+  }
+
+  /** Handle scroll wheel navigation */
+  handleWheel(event: WheelEvent): void {
+    event.preventDefault();
+    const now = Date.now();
+    // Throttle wheel events
+    if (now - this.lastWheelTime < 300) return;
+    this.lastWheelTime = now;
+
+    if (event.deltaY < 0) {
+      // Scrolling up
+      this.previousJob();
+    } else {
+      // Scrolling down
+      this.nextJob();
+    }
+  }
+
   // --- Modal Logic ---
   public openModal(): void {
     this.isModalOpen.set(true);
     if (this.isBrowser) {
       this.document.body.style.overflow = 'hidden';
+      // 5. UPDATE openModal to use the new method
+      this.updateMobileState(); // Ensure state is correct on open
       setTimeout(() => this.closeModalButton?.nativeElement.focus(), 0);
     }
   }
@@ -61,6 +136,8 @@ export class Career {
       this.document.body.style.overflow = '';
     }
     this.selectedJobIndex.set(0);
+    // We no longer need to reset isMobile here,
+    // the constructor and resize listener will keep it in sync.
   }
 
   downloadCV(): void {
@@ -70,21 +147,6 @@ export class Career {
   }
 
   // --- Card Stack & Job Navigation ---
-  private lastWheelTime = 0;
-
-  handleWheel(event: WheelEvent): void {
-    event.preventDefault();
-    const now = Date.now();
-    if (now - this.lastWheelTime < 300) return; // Throttle
-    this.lastWheelTime = now;
-
-    if (event.deltaY < 0) {
-      this.previousJob();
-    } else {
-      this.nextJob();
-    }
-  }
-
   selectJob(index: number): void {
     if (this.selectedJobIndex() !== index) {
       this.sound.playSound('clickHover');
@@ -104,20 +166,36 @@ export class Career {
     this.selectJob(current > 0 ? current - 1 : total - 1);
   }
 
+  /**
+   * Generates the 3D stack styles for each card.
+   * Uses translateX on mobile and translateY on desktop.
+   */
   getCardStyles(index: number): Record<string, string> {
     const total = this.workExperience().length;
     const selected = this.selectedJobIndex();
     const relIndex = (index - selected + total) % total;
 
+    // Hide cards that are too deep in the stack
     if (relIndex > 3) return { opacity: '0', pointerEvents: 'none', visibility: 'hidden' };
 
-    const translateY = relIndex * 24;
     const scale = 1 - relIndex * 0.04;
     const opacity = relIndex === 0 ? 1 : Math.max(0.4, 1 - relIndex * 0.3);
     const zIndex = total - relIndex;
 
+    let transform = '';
+
+    // Apply different translation direction based on viewport
+    // This will now dynamically update if the user resizes the window
+    if (this.isMobile) {
+      const translateX = relIndex * 24; // Use translateX for mobile
+      transform = `translate3d(${translateX}px, 0, -${relIndex}px) scale(${scale})`;
+    } else {
+      const translateY = relIndex * 24; // Use translateY for desktop
+      transform = `translate3d(0, ${translateY}px, -${relIndex}px) scale(${scale})`;
+    }
+
     return {
-      transform: `translate3d(0, ${translateY}px, -${relIndex}px) scale(${scale})`,
+      transform,
       opacity: opacity.toString(),
       zIndex: zIndex.toString(),
     };
@@ -155,6 +233,13 @@ export class Career {
         firstElement.focus();
         event.preventDefault();
       }
+    }
+  }
+
+  // --- ADD the new private method ---
+  private updateMobileState(): void {
+    if (this.isBrowser) {
+      this.isMobile = window.innerWidth < 768;
     }
   }
 }
