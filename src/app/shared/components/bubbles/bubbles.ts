@@ -7,6 +7,7 @@ export interface Bubble {
 
 @Component({
   selector: 'app-bubbles',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './bubbles.html',
   styleUrl: './bubbles.scss',

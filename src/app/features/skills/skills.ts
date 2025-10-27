@@ -6,6 +6,7 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
 @Component({
   selector: 'app-skills',
+  standalone: true,
   imports: [CommonModule, Bubbles],
   templateUrl: './skills.html',
   styleUrl: './skills.scss',

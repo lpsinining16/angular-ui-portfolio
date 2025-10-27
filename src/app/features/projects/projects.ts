@@ -6,7 +6,7 @@ import { Bubble, Bubbles } from '../../shared/components/bubbles/bubbles';
 
 @Component({
   selector: 'app-projects',
-  standalone: true, // standalone is a good practice!
+  standalone: true,
   imports: [CommonModule, Bubbles],
   templateUrl: './projects.html',
   styleUrls: ['./projects.scss'],

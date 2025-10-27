@@ -5,6 +5,7 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-contact',
+  standalone: true,
   imports: [Bubbles, NgOptimizedImage],
   templateUrl: './contact.html',
   styleUrl: './contact.scss',
