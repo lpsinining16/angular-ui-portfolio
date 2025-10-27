@@ -44,16 +44,16 @@ export class SoundService {
   private preloadSounds(): void {
     // FIX: Restored the full list of sounds to be preloaded.
     const sounds: Record<SoundType, string> = {
-      click: '/sounds/click.wav',
-      clickClose: '/sounds/click-close.wav',
-      clickError: '/sounds/click-error.wav',
-      clickHover: '/sounds/click-hover.wav',
-      clickInvalid: '/sounds/click-invalid.wav',
-      clickSounds: '/sounds/click-sounds.wav',
-      hoverBubbles: '/sounds/hover-bubbles.wav',
-      hoverBubbles2: '/sounds/hover-bubbles2.wav',
-      clickSpecial: '/sounds/click-special.mp3',
-      clickThemeSwitcher: '/sounds/click-theme-switcher.wav',
+      click: 'sounds/click.wav',
+      clickClose: 'sounds/click-close.wav',
+      clickError: 'sounds/click-error.wav',
+      clickHover: 'sounds/click-hover.wav',
+      clickInvalid: 'sounds/click-invalid.wav',
+      clickSounds: 'sounds/click-sounds.wav',
+      hoverBubbles: 'sounds/hover-bubbles.wav',
+      hoverBubbles2: 'sounds/hover-bubbles2.wav',
+      clickSpecial: 'sounds/click-special.mp3',
+      clickThemeSwitcher: 'sounds/click-theme-switcher.wav',
     };
 
     for (const key in sounds) {
