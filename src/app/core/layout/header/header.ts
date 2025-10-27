@@ -36,6 +36,7 @@ export class Header {
   private readonly router = inject(Router);
 
   // --- STATE SIGNALS ---
+  readonly profile = this.apiService.profile; 
   readonly navLinks = this.apiService.navLinks;
   readonly isMenuOpen = signal(false);
   private readonly scrollTop = signal(0);

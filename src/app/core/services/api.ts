@@ -9,6 +9,7 @@ export interface NavLink {
 export interface Profile {
   name: string;
   headline: string;
+  brandName: string;
   summary: string;
   about: string;
   about2: string;
@@ -83,6 +84,7 @@ export class ApiService {
   profile = signal<Profile>({
     name: 'Larry Sinining',
     headline: 'Software Engineer | Front-End Engineer',
+    brandName: 'larscript',
     summary: `Detail-oriented Software Engineer with over 9 years of experience in web and desktop application development. Skilled in Angular, REST APIs, JavaScript and TypeScript. I enjoy building clean, user-friendly Interfaces and working collaboratively in Agile teams. Always eager to learn new technologies and contribute to efficient, high-quality software.`,
     about: `I am a passionate and dedicated software engineer with a strong background in front-end
       development, particularly with Angular. With over 9 years in the industry, I've had the opportunity to
