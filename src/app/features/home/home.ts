@@ -31,9 +31,7 @@ export class Home implements AfterViewInit, OnDestroy {
 
   // --- STATE SIGNALS ---
   profile = this.apiService.profile;
-  skillIcons = this.apiService.skillIcons;
 
-  // IMPROVEMENT (Code Quality): Corrected array length to 9 to match the number of styled
   // bubble elements in the SCSS, preventing the creation of unstyled DOM elements.
   decorativeBubbles = Array.from({ length: 10 });
 
