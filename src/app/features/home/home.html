@@ -26,8 +26,8 @@
   <!-- Profile Image and Animations -->
   <div class="home-img">
     <div class="image-wrapper">
-      <img [ngSrc]="userProfile.profilePhoto" alt="Profile Photo of {{ userProfile.name }}" width="832" height="1248"
-        priority />
+      <img [ngSrc]="userProfile?.profilePhoto || 'images/lps_profile.png'" alt="Profile Photo of {{ userProfile.name }}"
+        width="832" height="1248" priority />
     </div>
     <!-- Decorative Bubbles (Generated from Component) -->
     @for (bubble of decorativeBubbles; track $index) {
