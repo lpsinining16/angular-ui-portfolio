@@ -9,7 +9,7 @@
   <div class="nav-wrapper">
     <!-- Logo (Acts as the 'Home' link) -->
     <a routerLink="/" fragment="home" (click)="onNavLinkClick('home')" class="logo" aria-label="Homepage">
-       {{ profile().brandName }}
+       {{ profile().brandName || 'Larry Sinining' }}
     </a>
 
     <!-- Desktop Navigation & Controls -->

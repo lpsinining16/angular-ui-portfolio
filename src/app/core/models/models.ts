@@ -10,6 +10,12 @@ export interface NavLink {
   isContact?: boolean;
 }
 
+export interface NavLinkMenu {
+  label: string;
+  fragment: string;
+  isContact?: boolean;
+}
+
 export interface Profile {
   name: string;
   headline: string;

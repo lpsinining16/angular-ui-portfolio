@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { NavLink, Profile, Skill, Project, WorkExperience, ApiResponse } from '../models/models';
-import { environment } from '../../../envronments/envronments';
+import { NavLink, Profile, Skill, Project, WorkExperience, ApiResponse, NavLinkMenu } from '../models/models';
+import { environment } from '../../../environments/environment';
 export * from '../models/models';
 @Injectable({
   providedIn: 'root',
@@ -41,7 +41,16 @@ export class ApiService {
   readonly skills = signal<Skill[]>([]);
   readonly projects = signal<Project[]>([]);
 
+  readonly navLinkMenu = signal<NavLinkMenu[]>([
+    { label: 'Home', fragment: 'home' },
+    { label: 'About', fragment: 'about' },
+    { label: 'Skills', fragment: 'skills' },
+    { label: 'Projects', fragment: 'projects' },
+    { label: 'Contact Me', fragment: 'contact', isContact: true },
+  ]);
+
   constructor() {
+    console.log('🌐 Using API base URL:', this.baseUrl);
     // Load all data when the service is first created
     this.loadNavLinks();
     this.loadProfile();
