@@ -1,1 +1,7 @@
 <router-outlet />
+
+<app-error-modal></app-error-modal>
+
+@if(loadingService.isLoading()) {
+  <app-loading></app-loading>
+}

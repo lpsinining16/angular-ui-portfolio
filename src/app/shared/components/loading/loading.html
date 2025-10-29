@@ -1,0 +1,19 @@
+<div class="loading-backdrop">
+    <div class="logo-loader">
+        <!-- The container is now a positioning context -->
+        <div class="brand-name-container">
+            <!-- The background text now acts as a sized placeholder -->
+            <div class="brand-name text-background" aria-hidden="true">
+                @for(letter of brandLetters; track $index) {
+                <span class="letter">{{ letter }}</span>
+                }
+            </div>
+            <!-- The foreground text is positioned on top of the placeholder -->
+            <div class="brand-name text-foreground">
+                @for(letter of brandLetters; track $index) {
+                <span class="letter">{{ letter }}</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+:host { display: block; }
+
+.modal-backdrop {
+  @apply fixed inset-0 z-[9998] flex items-center justify-center p-4;
+  background-color: rgba(var(--surface-rgb), 0.6);
+  backdrop-filter: blur(8px);
+  animation: fade-in 0.3s ease-out;
+}
+
+.modal-content {
+  @apply w-full max-w-md rounded-xl flex flex-col;
+  @apply overflow-hidden; // This is the key fix to clip child corners
+
+  background-color: var(--surface);
+  
+  // This stacked shadow creates a perfect 1px red "border" and a drop shadow
+  box-shadow: 0 0 0 1px #ef4444, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  animation: slide-in 0.4s ease-out;
+}
+
+.modal-header {
+  @apply flex items-center gap-4 p-4;
+  background-color: #fef2f2;
+  .dark & { background-color: rgba(127, 29, 29, 0.3); } // Use a transparent dark red
+}
+    
+.icon-container {
+  @apply flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center;
+  background-color: #fecaca;
+  color: #b91c1c;
+  .dark & { background-color: #7f1d1d; color: #fecaca; }
+}
+
+.modal-title {
+  @apply text-lg font-bold;
+  color: #7f1d1d;
+  .dark & { color: #fecaca; }
+}
+
+.modal-body { 
+  @apply p-6; 
+  color: var(--text-color);
+}
+
+.modal-footer { 
+  @apply p-4 flex justify-end;
+  // Background is no longer needed here, it inherits from modal-content
+  border-top: 1px solid var(--outline-variant);
+}
+
+.close-button {
+  @apply px-4 py-2 rounded-md font-semibold transition-colors;
+  background-color: #ef4444;
+  color: white;
+  &:hover { background-color: #dc2626; }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
