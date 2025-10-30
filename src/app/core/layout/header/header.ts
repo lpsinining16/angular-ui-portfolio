@@ -41,10 +41,7 @@ export class Header {
   private readonly scrollTop = signal(0);
   readonly scrollProgress = signal(0); // New signal for the progress bar
 
-  readonly navLinks = computed(() => {
-    const links = this.apiService.navLinks();
-    return links.length > 0 ? links : this.apiService.navLinkMenu();
-  });
+  readonly navLinks = this.apiService.navLinkMenu;
 
   // --- COMPUTED SIGNALS ---
   /** Determines if the header should be in its "shrunk" state. */

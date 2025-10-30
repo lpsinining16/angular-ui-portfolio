@@ -37,7 +37,6 @@ export class ApiService {
   // --- PUBLIC METHOD FOR RESOLVER ---
   fetchAllInitialData(): Observable<any> {
     return forkJoin({
-      navLinks: this.loadNavLinks(),
       profile: this.loadProfile(),
       workExperience: this.loadWorkExperience(),
       skills: this.loadSkills(),
@@ -46,14 +45,6 @@ export class ApiService {
   }
 
   // --- PRIVATE DATA-LOADING METHODS ---
-  private loadNavLinks(): Observable<NavLink[]> {
-    return this.http
-      .get<ApiResponse<NavLink[]>>(`${this.baseUrl}/nav-links`)
-      .pipe(
-        map((response) => response.data),
-        tap((data) => this.navLinks.set(data))
-      );
-  }
 
   private loadProfile(): Observable<Profile> {
     return this.http
