@@ -52,12 +52,23 @@ export class About {
     return [about, about2, about3].filter(Boolean);
   });
 
-  currentJobYears = computed(() => {
+ currentJobYears = computed(() => {
     const devJobs = this.api.workExperience().filter((job) => job.isDevRole);
     if (devJobs.length === 0) return 0;
-    const firstDevJob = devJobs[devJobs.length - 1];
+
+    // THE FIX: Sort the jobs by start date before picking the first one.
+    const sortedDevJobs = devJobs.sort((a, b) => {
+      const dateA = new Date(a.duration.split(' - ')[0]);
+      const dateB = new Date(b.duration.split(' - ')[0]);
+      return dateA.getTime() - dateB.getTime(); // Sorts from oldest to newest
+    });
+
+    // Now, the first item in the sorted array is guaranteed to be the earliest job.
+    const firstDevJob = sortedDevJobs[0]; 
+    
     const startDate = new Date(firstDevJob.duration.split(' - ')[0]);
     if (isNaN(startDate.getTime())) return 0;
+
     const diffTime = Math.abs(new Date().getTime() - startDate.getTime());
     return diffTime / (1000 * 60 * 60 * 24 * 365.25);
   });

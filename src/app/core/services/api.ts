@@ -1,10 +1,11 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
-import { forkJoin, Observable } from 'rxjs'; // <-- IMPORT forkJoin
+import { map, tap, catchError } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
 
-import { NavLink, Profile, Skill, Project, WorkExperience, ApiResponse, NavLinkMenu } from '../models/models';
+import { Profile, Skill, Project, WorkExperience, ApiResponse, NavLinkMenu } from '../models/models';
 import { environment } from '../../../environments/environment';
+import * as mockData from '../data/mock-data';
 export * from '../models/models';
 
 @Injectable({
@@ -14,7 +15,6 @@ export class ApiService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
 
-  readonly navLinks = signal<NavLink[]>([]);
   readonly profile = signal<Profile>({
     name: '', headline: '', brandName: '', summary: '', about: '', about2: '', about3: '',
     email: '', phone: '', location: '', linkedin: '', github: '', cvUrl: '', profilePhoto: '',
@@ -41,7 +41,19 @@ export class ApiService {
       workExperience: this.loadWorkExperience(),
       skills: this.loadSkills(),
       projects: this.loadProjects(),
-    });
+    }).pipe(
+      catchError(error => {
+        console.warn('API fetch failed, falling back to local mock data.', error);
+
+        this.profile.set(mockData.profile as unknown as Profile);
+        this.workExperience.set(mockData.workExperience as unknown as WorkExperience[]);
+        this.skills.set(mockData.skills as unknown as Skill[]);
+        this.projects.set(mockData.projects as unknown as Project[]);
+
+
+        return of(null); 
+      })
+    );
   }
 
   // --- PRIVATE DATA-LOADING METHODS ---
